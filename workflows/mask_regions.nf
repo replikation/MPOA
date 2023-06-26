@@ -1,5 +1,5 @@
-include { minimap2 } from './process/minimap2.nf'
-include { plasflow } from './process/plasflow.nf'
+include { minimap2; minimap2_degen } from './process/minimap2.nf'
+include { plasflow; plasflow_degen } from './process/plasflow.nf'
 
 workflow mask_regions_wf {
     take:   
@@ -26,6 +26,54 @@ workflow mask_regions_wf {
                     }
 
     emit: minimap2.out.fasta
+
+
+}
+
+workflow mask_regions_degen_wf {
+    take:   
+        fastq
+        fasta
+    main: 
+
+    // join channels
+    combined_ch = fasta.join(fastq, by:0)
+
+    // check if everything is alright
+    no_match = combined_ch.ifEmpty{ log.info "\033[0;33mCould not match any reads to genomes, please read the help via --help\033[0m" }
+
+    minimap2_degen(combined_ch)
+    plasflow_degen(minimap2_degen.out.fasta)
+
+
+    // report masked status
+    report_ch = plasflow_degen.out.report.view { name, N, W, S, M, K, R, Y, B, D, H, V -> "$name (chromosome): N:$N, W:$W, S:$S, M:$M, K:$K, R:$R, Y:$Y, B:$B, D:$D, H:$H, V:$V" }
+
+
+    report_write_ch = minimap2_degen.out.report.join(plasflow_degen.out.report)
+        .collectFile(seed: 'name,type,N(ATCG),W(AT),S(CG),M(AC),K(TG),R(AG),Y(TC),B(TCG),D(ATG),H(ATC),V(ACG)\n', 
+                    storeDir: params.output + "/") {
+                    row -> [ "masked_bases_summary.csv", row[0] + ',' + 'genome' + "," + row[1] + ',' + row[2] + "," + row[3] + ',' + row[4] + ',' +
+                    row[5] + ',' + row[6] + ',' + row[7] + ',' + row[8] + ',' + row[9] + ',' + row[10] + ',' + row[11] + ',' + '\n' +
+                    row[0] + ',' + 'chromosome' + "," + row[12] + ',' + row[13] + "," + row[14] + ',' + row[15] + ',' +
+                    row[16] + ',' + row[17] + ',' + row[18] + ',' + row[19] + ',' + row[20] + ',' + row[21] + ',' + row[22] + ',' + '\n'
+                    ]
+                    }
+/*
+Weak	W	2	A			T	W
+Strong	S		C	G		S
+Amino	M	A	C			K
+Ketone	K			G	T	M
+Purine	R	A		G		Y
+Pyrimidine	Y		C		T	R
+Not A	B	3		C	G	T	V
+Not C	D	A		G	T	H
+Not G	H	A	C		T	D
+Not T[a]	V	A	C	G		B
+Any one base	N	4	A	C	G	T	N
+
+*/
+    emit: minimap2_degen.out.fasta
 
 
 }

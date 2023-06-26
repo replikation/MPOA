@@ -46,17 +46,18 @@ nextflow.enable.dsl=2
 * WORKFLOWS
 **************************/
 
-include { mask_regions_wf } from './workflows/mask_regions.nf' 
+include { mask_regions_wf; mask_regions_degen_wf } from './workflows/mask_regions.nf' 
 
 /************************** 
 * MAIN WORKFLOW 
 **************************/
 
 workflow {
-defaultMSG()
+    defaultMSG()
 
-mask_regions_wf(nano_input_ch, fasta_input_ch)
-                 
+    if (params.degen) { mask_regions_degen_wf(nano_input_ch, fasta_input_ch) }
+    else { mask_regions_wf(nano_input_ch, fasta_input_ch) }
+             
 }
 
 
@@ -74,7 +75,7 @@ def helpMSG() {
     log.info """
     ____________________________________________________________________________________________
     
-    Workflow: MPOA - Mask Pathogens for Outbreak Analysis
+    Workflow: MPOA - Mask bases in Pathogens for Outbreak Analysis
 
     ${c_yellow}Usage example:${c_reset}
     nextflow run nanozoo/MPOA --fastq '*.fastq' --fasta '*.fasta'
@@ -86,7 +87,11 @@ def helpMSG() {
       Matches: ${c_green}Sample1${c_reset}.clean.fasta ${c_green}Sample1${c_reset}.fastq.gz
       This NOT: ${c_yellow}clean${c_reset}.Sample1.clean.fasta ${c_yellow}Sample1${c_reset}.fastq.gz
 
-${c_yellow}Options  (optional)${c_reset}
+    ${c_yellow}Workflow settings${c_reset}  
+     ${c_green}--degen ${c_reset}        Uses degenerate IUPAC-Base codes for masking (e.g. M,Y,K,N,D,V...)     
+     ${c_green}--depth X ${c_reset}      Masks reagions with a sequencing depth below X with N's [default: $params.depth]
+
+    ${c_yellow}Options  (optional)${c_reset}
      --cores         amount of cores for a process (local use) [default: $params.cores]
      --max_cores     max amount of cores for poreCov to use (local use) [default: $params.max_cores]
      --memory        available memory [default: $params.memory]
