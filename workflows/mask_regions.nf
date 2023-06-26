@@ -59,20 +59,7 @@ workflow mask_regions_degen_wf {
                     row[16] + ',' + row[17] + ',' + row[18] + ',' + row[19] + ',' + row[20] + ',' + row[21] + ',' + row[22] + ',' + '\n'
                     ]
                     }
-/*
-Weak	W	2	A			T	W
-Strong	S		C	G		S
-Amino	M	A	C			K
-Ketone	K			G	T	M
-Purine	R	A		G		Y
-Pyrimidine	Y		C		T	R
-Not A	B	3		C	G	T	V
-Not C	D	A		G	T	H
-Not G	H	A	C		T	D
-Not T[a]	V	A	C	G		B
-Any one base	N	4	A	C	G	T	N
 
-*/
     emit: minimap2_degen.out.fasta
 
 
