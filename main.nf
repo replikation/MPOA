@@ -47,6 +47,7 @@ nextflow.enable.dsl=2
 **************************/
 
 include { mask_regions_wf; mask_regions_degen_wf } from './workflows/mask_regions.nf' 
+include { identify_logo_wf } from './workflows/identify_logo.nf'
 
 /************************** 
 * MAIN WORKFLOW 
@@ -55,8 +56,8 @@ include { mask_regions_wf; mask_regions_degen_wf } from './workflows/mask_region
 workflow {
     defaultMSG()
 
-    if (params.degen) { mask_regions_degen_wf(nano_input_ch, fasta_input_ch) }
-    else { mask_regions_wf(nano_input_ch, fasta_input_ch) }
+    if (params.degen) { identify_logo_wf(mask_regions_degen_wf(nano_input_ch, fasta_input_ch)) }
+    else { identify_logo_wf(mask_regions_wf(nano_input_ch, fasta_input_ch)) }
              
 }
 
@@ -88,8 +89,9 @@ def helpMSG() {
       This NOT: ${c_yellow}clean${c_reset}.Sample1.clean.fasta ${c_yellow}Sample1${c_reset}.fastq.gz
 
     ${c_yellow}Workflow settings${c_reset}  
-     ${c_green}--degen ${c_reset}        Uses degenerate IUPAC-Base codes for masking (e.g. M,Y,K,N,D,V...)     
-     ${c_green}--depth X ${c_reset}      Masks reagions with a sequencing depth below X with N's [default: $params.depth]
+     ${c_blue}--degen ${c_reset}        Uses degenerate IUPAC-Base codes for masking (e.g. M,Y,K,N,D,V...)     
+     ${c_blue}--depth X ${c_reset}      Masks reagions with a sequencing depth below X with N's [default: $params.depth]
+     ${c_blue}--motif X ${c_reset}      Upstream and Downstream length of sequence Motif [default: $params.motif]
 
     ${c_yellow}Options  (optional)${c_reset}
      --cores         amount of cores for a process (local use) [default: $params.cores]

@@ -25,7 +25,7 @@ workflow mask_regions_wf {
                     row -> [ "masked_bases_summary.csv", row[0] + ',' + row[1] + ',' + row[2] + '\n']
                     }
 
-    emit: minimap2.out.fasta
+    emit: plasflow.out.chromosomes
 
 
 }
@@ -60,7 +60,7 @@ workflow mask_regions_degen_wf {
                     ]
                     }
 
-    emit: minimap2_degen.out.fasta
+    emit: plasflow_degen.out.chromosomes
 
 
 }
