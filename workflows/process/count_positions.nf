@@ -1,6 +1,6 @@
 process count_positions {
         label 'seqkit'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+        publishDir "${params.output}/${name}/SNP_positions/", mode: 'copy'
     input:
         tuple val(name), path(fasta)
     output:

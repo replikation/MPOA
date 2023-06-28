@@ -1,21 +1,21 @@
 process plot_motifs {
         label 'ggplot2'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+        publishDir "${params.output}/", mode: 'copy'
     input:
-        //tuple val(name), path(fasta), val(allmasked) 
+        tuple val(name), path(fasta)
     output:
-        //tuple val(name), path("")
+        tuple val(name), path("${name}.svg")
 
     script:
         """
-        # remove motifs with below e.g. 5 occurences
-        # write it in the title (n > 4)
+        create_logo.R ${name}
 
-        # posit R studio to create it
+        mv logo.svg ${name}.svg
         """
+
         stub:
         """
-        
+        touch ${name}.svg
         """
 }
 

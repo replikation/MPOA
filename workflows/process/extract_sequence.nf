@@ -1,6 +1,6 @@
 process extract_sequence {
         label 'samtools'
-        publishDir "${params.output}/${name}/regions/", mode: 'copy'
+        publishDir "${params.output}/${name}/SNP_regions/", mode: 'copy'
     input:
         tuple val(name), path(fasta), path(positions)
     output:
