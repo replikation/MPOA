@@ -125,7 +125,7 @@ def defaultMSG() {
         --output            $params.output
         --cores             $params.cores
         --max_cores         $params.max_cores
-        --mem               $params.mem
+        --mem               $params.memory
     \u001B[1;30m______________________________________\033[0m
     """.stripIndent()
 }
