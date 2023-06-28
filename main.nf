@@ -57,7 +57,7 @@ workflow {
     defaultMSG()
 
     if (params.degen) { identify_logo_wf(mask_regions_degen_wf(nano_input_ch, fasta_input_ch)) }
-    else { identify_logo_wf(mask_regions_wf(nano_input_ch, fasta_input_ch)) }
+    else { mask_regions_wf(nano_input_ch, fasta_input_ch) }
              
 }
 

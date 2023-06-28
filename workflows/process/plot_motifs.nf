@@ -1,6 +1,6 @@
 process plot_motifs {
         label 'ggplot2'
-        publishDir "${params.output}/", mode: 'copy'
+        publishDir "${params.output}/motif_logos", mode: 'copy'
     input:
         tuple val(name), path(fasta)
     output:
