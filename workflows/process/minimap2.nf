@@ -35,10 +35,8 @@ process minimap2_degen {
     input:
         tuple val(name), path(fasta), path(reads)
   	output:
-    	tuple val(name), file("${name}.masked.fasta"), emit: fasta
-        tuple val(name), file("${name}.masked.sorted.bam"), emit: bam
-        tuple val(name), env(BASE_N), env(BASE_W), env(BASE_S), env(BASE_M), env(BASE_K), env(BASE_R), 
-                         env(BASE_Y), env(BASE_B), env(BASE_D), env(BASE_H), env(BASE_V), emit: report
+    	tuple val(name), path("${name}.masked.fasta"), path("${name}_depth_file.txt"), emit: fasta
+        tuple val(name), path("${name}.masked.sorted.bam"), emit: bam
   	script:
     """
     minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
@@ -48,27 +46,15 @@ process minimap2_degen {
     samtools consensus -@ ${task.cpus} \
                         --ambig \
                         -f fasta  \
-                        --min-depth ${params.depth} \
                         -X r10.4_sup \
                         ${name}.minimap.sorted.bam \
                         -o ${name}.masked.fasta
 
+    # get depth per position
+    samtools depth -a ${name}.minimap.sorted.bam > ${name}_depth_file.txt
+
     # reduce disk footprint                    
     rm ${name}.minimap.sorted.bam
-
-    # get Masked Bases
-    BASE_N=\$(grep -v ">" ${name}.masked.fasta | grep -o "N" | wc -l)
-    BASE_W=\$(grep -v ">" ${name}.masked.fasta | grep -o "W" | wc -l)
-    BASE_S=\$(grep -v ">" ${name}.masked.fasta | grep -o "S" | wc -l)
-    BASE_M=\$(grep -v ">" ${name}.masked.fasta | grep -o "M" | wc -l)
-    BASE_K=\$(grep -v ">" ${name}.masked.fasta | grep -o "K" | wc -l)
-    BASE_R=\$(grep -v ">" ${name}.masked.fasta | grep -o "R" | wc -l)
-    BASE_Y=\$(grep -v ">" ${name}.masked.fasta | grep -o "Y" | wc -l)
-    BASE_B=\$(grep -v ">" ${name}.masked.fasta | grep -o "B" | wc -l)
-    BASE_D=\$(grep -v ">" ${name}.masked.fasta | grep -o "D" | wc -l)
-    BASE_H=\$(grep -v ">" ${name}.masked.fasta | grep -o "H" | wc -l)
-    BASE_V=\$(grep -v ">" ${name}.masked.fasta | grep -o "V" | wc -l)
-
 
     # rebam to masked file for visuals
     minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax map-ont ${name}.masked.fasta ${reads}

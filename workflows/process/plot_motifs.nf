@@ -5,13 +5,17 @@ process plot_motifs {
     input:
         tuple val(name), path(fasta)
     output:
-        tuple val(name), path("${name}.svg")
+        tuple val(name), path("${name}.svg"), optional: true
 
     script:
         """
-        create_logo.R ${name}
+        if [ -f ?.regions.fasta ]; then
+    
+            create_logo.R ${name}
+            mv logo.svg ${name}.svg    
+        
+        fi
 
-        mv logo.svg ${name}.svg
         """
 
         stub:
