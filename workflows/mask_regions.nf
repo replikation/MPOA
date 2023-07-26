@@ -62,7 +62,9 @@ workflow mask_regions_degen_wf {
                     ]
                     }
 
-    emit: plasflow_degen.out.chromosomes
-
+    emit: 
+        plasflow_degen.out.chromosomes
+        minimap2_degen.out.bam
+        minimap2_degen.out.fasta.map{it -> tuple(it[0], it[1])}
 
 }

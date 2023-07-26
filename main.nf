@@ -56,7 +56,11 @@ include { identify_logo_wf } from './workflows/identify_logo.nf'
 workflow {
     defaultMSG()
 
-    if (params.degen) { identify_logo_wf(mask_regions_degen_wf(nano_input_ch, fasta_input_ch)) }
+    if (params.degen) { 
+    
+        identify_logo_wf(mask_regions_degen_wf(nano_input_ch, fasta_input_ch)) 
+    
+    }
     else { mask_regions_wf(nano_input_ch, fasta_input_ch) }
              
 }
@@ -84,21 +88,21 @@ def helpMSG() {
     ${c_yellow}Inputs (Mandatory):
      ${c_green}--fastq ${c_reset}        e.g.: 'sample1.fastq' or '*.fastq' or '*/*.fastq'
      ${c_green}--fasta ${c_reset}        e.g.: 'sample1.fasta' or '*.fasta' 
-    Reads and Genome files are mateched based on the first word before the first dot in their filename.
+    Reads and Genome files are matched based on the first word before the first dot in their filename.
       Matches: ${c_green}Sample1${c_reset}.clean.fasta ${c_green}Sample1${c_reset}.fastq.gz
       This NOT: ${c_yellow}clean${c_reset}.Sample1.clean.fasta ${c_yellow}Sample1${c_reset}.fastq.gz
 
     ${c_yellow}Workflow settings${c_reset}  
-     ${c_blue}--degen ${c_reset}        Uses degenerate IUPAC-Base codes for masking (e.g. M,Y,K,N,D,V...)     
-     ${c_blue}--depth X ${c_reset}      Masks reagions with a sequencing depth below X with N's [default: $params.depth]
+     ${c_blue}--degen ${c_reset}        Uses degenerate IUPAC-Base codes for masking (e.g. M,Y,K,N,D,V...) 
+     ${c_blue}--depth X ${c_reset}      Masks regions with a sequencing depth below X with N's [default: $params.depth]
      ${c_blue}--motif X ${c_reset}      Upstream and Downstream length of sequence Motif [default: $params.motif]
 
     ${c_yellow}Options  (optional)${c_reset}
-     --cores         amount of cores for a process (local use) [default: $params.cores]
-     --max_cores     max amount of cores for poreCov to use (local use) [default: $params.max_cores]
-     --memory        available memory [default: $params.memory]
-     --output        name of the result folder [default: $params.output]
-     --workdir       defines the path where nextflow writes tmp files [default: $params.workdir]
+     --cores         Amount of cores for a process (local use) [default: $params.cores]
+     --max_cores     Max amount of cores for poreCov to use (local use) [default: $params.max_cores]
+     --memory        Available memory [default: $params.memory]
+     --output        Name of the result folder [default: $params.output]
+     --workdir       Defines the path to the temporary files [default: $params.workdir]
 
     ${c_yellow}Profiles:${c_reset}
      -profile               local,docker
