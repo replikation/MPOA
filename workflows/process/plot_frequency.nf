@@ -9,7 +9,7 @@ process plot_frequency {
 
     script:
         """
-        cat ${frequency} | grep -v "-nan" > input.tsv
+        cat ${frequency} | grep -v "nan" > input.tsv
         violin_chart.R
         """
 

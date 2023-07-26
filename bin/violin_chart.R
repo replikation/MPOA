@@ -1,9 +1,10 @@
 #!/usr/bin/env Rscript
 
 library(ggplot2)
+require(readr)
 
 names <- c('deg', 'base', 'ratio')
-df1 <- read_tsv(input.tsv, col_names=names)
+df1 <- read_tsv("input.tsv", col_names=names)
 
 plot <- ggplot(df1, aes(x=deg, y=ratio, fill=deg)) +
   scale_fill_brewer(palette="Blues") +
@@ -19,6 +20,6 @@ plot <- ggplot(df1, aes(x=deg, y=ratio, fill=deg)) +
 
 
 
-svg("chart.svg", height=as.numeric(length(combined))*2)
+svg("chart.svg")  # , height=as.numeric(length(combined))*2
 plot
 dev.off()
