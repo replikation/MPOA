@@ -9,7 +9,9 @@ process plot_motifs {
 
     script:
         """
-        if [ -f ?.regions.fasta ]; then
+        FILES=\$(ls ?.regions.fasta | head -1)
+
+        if [ -f \$FILES ]; then
     
             create_logo.R ${name}
             mv logo.svg ${name}.svg    

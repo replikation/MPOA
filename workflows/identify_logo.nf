@@ -6,9 +6,8 @@ include { plot_frequency} from './process/plot_frequency.nf'
 
 workflow identify_logo_wf {
     take:   
-        fasta
-        bam // name,bam
-        reference // name,fasta
+        fasta // masked and depth masked
+        bam // masked bam (not dm masked)
     main: 
 
         // get positions
@@ -20,9 +19,8 @@ workflow identify_logo_wf {
         // plot frequency per deg. base
         if (params.frequency) {
             get_frequency(
-                count_positions.out
+                count_positions.out // val path( fastadm and masked), path (positions deg bases)
                 .join(bam)
-                .join(reference)
             )
 
             // collect all frequency results

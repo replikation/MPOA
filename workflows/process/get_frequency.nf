@@ -2,7 +2,7 @@ process get_frequency {
         label 'samtools'
         publishDir "${params.output}/${name}/pileup/", mode: 'copy'
     input:
-        tuple val(name), path(fasta), path(positions), path(bam), path(reference)
+        tuple val(name), path(fasta), path(positions), path(bam) 
 
   	output:
     	tuple val(name), file("${name}_Frequency.tsv"), path("${name}_pileup.tsv")
