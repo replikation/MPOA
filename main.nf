@@ -55,13 +55,8 @@ include { identify_logo_wf } from './workflows/identify_logo.nf'
 
 workflow {
     defaultMSG()
-
-    if (params.degen) { 
-    
+   
         identify_logo_wf(mask_regions_degen_wf(nano_input_ch, fasta_input_ch)) 
-    
-    }
-    else { mask_regions_wf(nano_input_ch, fasta_input_ch) }
              
 }
 
@@ -93,7 +88,7 @@ def helpMSG() {
       This NOT: ${c_yellow}clean${c_reset}.Sample1.clean.fasta ${c_yellow}Sample1${c_reset}.fastq.gz
 
     ${c_yellow}Workflow settings${c_reset}  
-     ${c_blue}--degen ${c_reset}        Uses degenerate IUPAC-Base codes for masking (e.g. M,Y,K,N,D,V...) 
+     ${c_blue}--frequency ${c_reset}    Turns of frequency calculation of bases (saves time)
      ${c_blue}--depth X ${c_reset}      Masks regions with a sequencing depth below X with N's [default: $params.depth]
      ${c_blue}--motif X ${c_reset}      Upstream and Downstream length of sequence Motif [default: $params.motif]
 
@@ -112,6 +107,11 @@ def helpMSG() {
 }
 
 def defaultMSG() {
+    c_green = "\033[0;32m";
+    c_reset = "\033[0m";
+    c_yellow = "\033[0;33m";
+    c_blue = "\033[0;34m";
+    c_dim = "\033[2m";
     log.info """
     MPOA
     \u001B[1;30m______________________________________\033[0m
@@ -122,13 +122,15 @@ def defaultMSG() {
     Current User:           $workflow.userName
     Nextflow-version:       $nextflow.version
     Starting time:          $nextflow.timestamp
-    Workflow hash:          $workflow.commitId
-    Workflow revision:      $workflow.revision
+
+    Frequency calculation:
+        --frequency         $params.frequency
+
 
         --workdir           $params.workdir
         --output            $params.output
+        --max_cores         $params.max_cores        
         --cores             $params.cores
-        --max_cores         $params.max_cores
         --mem               $params.memory
     \u001B[1;30m______________________________________\033[0m
     """.stripIndent()

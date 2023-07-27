@@ -18,15 +18,16 @@ workflow identify_logo_wf {
         plot_motifs(extract_sequence.out)
 
         // plot frequency per deg. base
-                //count_poistions.out  has         tuple val(name), path(fasta), path("*_positions.txt"), path()bam
-        get_frequency(
-            count_positions.out
-            .join(bam)
-            .join(reference)
-        )        
+        if (params.frequency) {
+            get_frequency(
+                count_positions.out
+                .join(bam)
+                .join(reference)
+            )
 
-        // collect all frequency results
-        plot_frequency(get_frequency.out.map{it -> it[1]}.collect())
+            // collect all frequency results
+            plot_frequency(get_frequency.out.map{it -> it[1]}.collect())
+        }      
 
     emit:  extract_sequence.out
 }
