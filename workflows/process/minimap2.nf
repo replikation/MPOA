@@ -13,7 +13,7 @@ process minimap2 {
 
     # consensus
     samtools consensus -@ ${task.cpus} -f fasta -X r10.4_sup ${name}.minimap.sorted.bam -o ${name}.masked.fasta
-    rm ${name}.minimap.sorted.bam
+    rm ${name}.minimap.sorted.bam ${name}.sam
 
     # get Masked Bases
     MASKREGIONS=\$(grep -v ">" ${name}.masked.fasta | grep -o "N" | wc -l)
@@ -21,6 +21,8 @@ process minimap2 {
     # rebam to masked file for visuals
     minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax map-ont ${name}.masked.fasta ${reads}
     samtools view -bS ${name}.masked.sam | samtools sort - -@ ${task.cpus} -o ${name}.masked.sorted.bam
+
+    rm ${name}.masked.sam
     """
     stub:
     """
@@ -52,7 +54,7 @@ process minimap2_degen {
 
 
     # reduce disk footprint                    
-    rm ${name}.minimap.sorted.bam
+    rm ${name}.minimap.sorted.bam ${name}.sam
 
     # rebam to masked file for visuals
     minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax map-ont ${name}.masked.fasta ${reads}
@@ -60,6 +62,9 @@ process minimap2_degen {
 
     # get depth per position
     samtools depth -a ${name}.masked.sorted.bam > ${name}_depth_file.txt
+
+    # reduce disk footprint                    
+    rm ${name}.masked.sam
 
     """
     stub:
