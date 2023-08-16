@@ -11,7 +11,7 @@ process count_positions {
                 seqkit locate --ignore-case --only-positive-strand  -r --pattern "\${BASE}" ${fasta} > \${BASE}_positions.txt
 
                 if [ "\$( wc -l <\${BASE}_positions.txt )" -eq 1 ]; then
-                    rm -i \${BASE}_positions.txt
+                    rm -f \${BASE}_positions.txt
                 fi
         done
         """
