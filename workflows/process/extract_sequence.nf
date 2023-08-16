@@ -5,7 +5,7 @@ process extract_sequence {
     input:
         tuple val(name), path(fasta), path(positions)
     output:
-        tuple val(name), path("*.regions.fasta")
+        tuple val(name), path("*.regions.fasta"), optional: true
     script:
         """
         # WSMKRYBDHV

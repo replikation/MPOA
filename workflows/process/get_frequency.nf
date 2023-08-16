@@ -8,7 +8,8 @@ process get_frequency {
     	tuple val(name), file("${name}_Frequency.tsv"), path("${name}_pileup.tsv")
   	script:
     """
-    # create subbam base on fasta name(?)
+    # ACTIVATE HISTORY
+        set -euxo pipefail
 
     # remove headers and create one correct bed position file for samtools (name \t position)
     tail -q -n+2 ${positions}  | awk -v OFS='\\t' '{print \$1,\$5}' > clean.bed
