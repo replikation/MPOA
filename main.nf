@@ -78,7 +78,7 @@ def helpMSG() {
     Workflow: MPOA - Mask bases in Pathogens for Outbreak Analysis
 
     ${c_yellow}Usage example:${c_reset}
-    nextflow run nanozoo/MPOA --fastq '*.fastq' --fasta '*.fasta'
+    nextflow run nanozoo/MPOA --fastq '*.fastq' --fasta '*.fasta' -profile local,docker
 
     ${c_yellow}Inputs (Mandatory):
      ${c_green}--fastq ${c_reset}        e.g.: 'sample1.fastq' or '*.fastq' or '*/*.fastq'
