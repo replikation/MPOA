@@ -12,7 +12,7 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/maralohde.svg?style=social)](https://twitter.com/maralohde) 
 [![Twitter Follow](https://img.shields.io/twitter/follow/gcloudChris.svg?style=social)](https://twitter.com/gcloudChris) 
 
-
+>https://www.biorxiv.org/content/10.1101/2023.09.15.556300v1
 
 ## What is this Repo?
 * A quick workflow to mask fasta files for outbreak analysis
