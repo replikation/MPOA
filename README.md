@@ -40,5 +40,8 @@
 nextflow run replikation/MPOA -profile local,docker --help
 
 #example run
-nextflow run nanozoo/MPOA --fastq '*.fastq' --fasta '*.fasta' -profile local,docker
+nextflow run replikation/MPOA --fastq '*.fastq' --fasta '*.fasta' -profile local,docker
+
+#example run on a HPC
+nextflow run replikation/MPOA --fastq '*.fastq' --fasta '*.fasta' -profile slurm,singularity
 ```
