@@ -1,7 +1,5 @@
 #!/usr/bin/env Rscript
 
-install.packages("ggseqlogo")
-
 # Load the required packages
 require(ggplot2)
 require(ggseqlogo)
