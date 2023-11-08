@@ -88,7 +88,7 @@ def helpMSG() {
       This NOT: ${c_yellow}clean${c_reset}.Sample1.clean.fasta ${c_yellow}Sample1${c_reset}.fastq.gz
 
     ${c_yellow}Workflow settings${c_reset}  
-     ${c_blue}--frequency ${c_reset}    Turns of frequency calculation of bases (saves time)
+     ${c_blue}--frequency ${c_reset}    Turns on frequency calculation of bases (default: off)
      ${c_blue}--depth X ${c_reset}      Masks regions with a sequencing depth below X with N's [default: $params.depth]
      ${c_blue}--motif X ${c_reset}      Upstream and Downstream length of sequence Motif [default: $params.motif]
 
