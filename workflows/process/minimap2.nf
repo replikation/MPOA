@@ -8,7 +8,7 @@ process minimap2 {
         tuple val(name), file("${name}.masked.sorted.bam"), emit: bam
   	script:
     """
-    minimap2 -t ${task.cpus} -o ${name}.sam -ax sr ${fasta} ${reads}
+    minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
     samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam
 
     # consensus
@@ -19,7 +19,7 @@ process minimap2 {
     MASKREGIONS=\$(grep -v ">" ${name}.masked.fasta | grep -o "N" | wc -l)
 
     # rebam to masked file for visuals
-    minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax sr ${name}.masked.fasta ${reads}
+    minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax map-ont ${name}.masked.fasta ${reads}
     samtools view -bS ${name}.masked.sam | samtools sort - -@ ${task.cpus} -o ${name}.masked.sorted.bam
 
     rm ${name}.masked.sam
@@ -41,7 +41,7 @@ process minimap2_degen {
         tuple val(name), path("${name}.masked.sorted.bam"), emit: bam
   	script:
     """
-    minimap2 -t ${task.cpus} -o ${name}.sam -ax sr ${fasta} ${reads}
+    minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
     samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam
 
     # consensus
@@ -57,7 +57,7 @@ process minimap2_degen {
     rm ${name}.minimap.sorted.bam ${name}.sam
 
     # rebam to masked file for visuals
-    minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax sr ${name}.masked.fasta ${reads}
+    minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax map-ont ${name}.masked.fasta ${reads}
     samtools view -bS ${name}.masked.sam | samtools sort - -@ ${task.cpus} -o ${name}.masked.sorted.bam
 
     # get depth per position
