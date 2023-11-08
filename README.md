@@ -27,6 +27,8 @@
 ## 1.2 Docker
 * Installation [here](https://docs.docker.com/v17.09/engine/installation/linux/docker-ce/ubuntu/#install-docker-ce) (recommended), alternatively via: `sudo apt install -y docker`
 * Add Docker to the user: `sudo usermod -a -G docker $USER`
+## 1.3 Singularity
+* as an alternative to Docker you can also install and use Singularity, e.g. on a HPC
 
 # Quick start
 
