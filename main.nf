@@ -98,11 +98,23 @@ def helpMSG() {
      --memory        Available memory [default: $params.memory]
      --output        Name of the result folder [default: $params.output]
      --workdir       Defines the path to the temporary files [default: $params.workdir]
+     --cachedir      defines the path where singularity images are cached [default: $params.cachedir]
 
-    ${c_yellow}Profiles:${c_reset}
-     -profile               local,docker
-                             ${c_reset}
+    ${c_yellow}Execution/Engine profiles (choose executer and engine${c_reset}
+    MPOA supports profiles to run via different ${c_green}Executers${c_reset} and ${c_blue}Engines${c_reset} 
+    examples:
+     -profile ${c_green}local${c_reset},${c_blue}docker${c_reset}
+     -profile ${c_green}slurm${c_reset},${c_blue}singularity${c_reset}
 
+      ${c_green}Executer${c_reset} (choose one):
+       local
+       slurm
+      ${c_blue}Engines${c_reset} (choose one):
+       docker
+       singularity
+
+       Note: The singularity profile automatically passes the following environment variables to the container. 
+       to ensure execution on HPCs: HTTPS_PROXY, HTTP_PROXY, http_proxy, https_proxy, FTP_PROXY, ftp_proxy
     """.stripIndent()
 }
 
