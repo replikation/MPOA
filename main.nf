@@ -98,7 +98,7 @@ def helpMSG() {
      --memory        Available memory [default: $params.memory]
      --output        Name of the result folder [default: $params.output]
      --workdir       Defines the path to the temporary files [default: $params.workdir]
-     --cachedir      defines the path where singularity images are cached [default: $params.cachedir]
+     --cachedir      Defines the path where singularity images are cached [default: $params.cachedir]
 
     ${c_yellow}Execution/Engine profiles (choose executer and engine${c_reset}
     MPOA supports profiles to run via different ${c_green}Executers${c_reset} and ${c_blue}Engines${c_reset} 
