@@ -1,7 +1,7 @@
 process plot_motifs {
         label 'ggplot2'
         publishDir "${params.output}/motif_logos", mode: 'copy'
-        errorStrategy 'ignore'
+        //errorStrategy 'ignore'
     input:
         tuple val(name), path(fasta)
     output:
@@ -9,9 +9,10 @@ process plot_motifs {
 
     script:
         """
-        FILES=\$(ls ?.regions.fasta | head -1)
+        find . -name "?.regions.fasta" -exec awk -v x=11 'NR==x{exit 1}' {} \\; -exec rm -f {} \\;
+        FILES=\$(ls | grep ".regions.fasta" | head -1)
 
-        if [ -f \$FILES ]; then
+        if [ ! -z "\${FILES}" ]; then
     
             create_logo.R ${name}
             mv logo.svg ${name}.svg    

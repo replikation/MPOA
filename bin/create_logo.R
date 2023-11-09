@@ -36,7 +36,7 @@ names(combined) <- name_list_comb
 combined <- lapply(combined, function(x) x[-1])
 
 # removes empty lines
-combined <-  combined[sapply(combined, length) > 4]
+combined <-  combined[sapply(combined, length) > 0]
 
 # WSMKRYBDHV
 cs_gaps <-

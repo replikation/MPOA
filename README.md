@@ -19,6 +19,10 @@
 * It mitigates false base calls from e.g., modified bases by masking all such positions that are "uncertain"
 * Figures and overviews are provided to assess weather your samples might be affected by such an issue
 
+<p align="center">
+  <img src="data/figures/figure_4_flowchart.drawio.png" width="800" title="Workflow">
+</p>
+
 # Quick installation
 ## 1.1 Nextflow (the workflow manager)
 * MPOA needs [Nextflow](https://www.nextflow.io/index.html) and java run time (default-jre)
