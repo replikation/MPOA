@@ -44,10 +44,10 @@
 * E.g. genome file **sample1**.test.fasta matches with read file **sample1**.fastq.gz
 
 ```bash
-# install
+#install
 nextflow pull replikation/MPOA
 
-# help
+#help
 nextflow run replikation/MPOA -profile local,docker --help
 
 #example run
