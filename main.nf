@@ -93,6 +93,7 @@ def helpMSG() {
      ${c_blue}--motif X ${c_reset}      Upstream and Downstream length of sequence Motif [default: $params.motif]
 
     ${c_yellow}Options  (optional)${c_reset}
+     --all           Output absolutely all positions, including references with no data aligned against them [default: $params.all]
      --cores         Amount of cores for a process (local use) [default: $params.cores]
      --max_cores     Max amount of cores for poreCov to use (local use) [default: $params.max_cores]
      --memory        Available memory [default: $params.memory]

@@ -7,6 +7,26 @@ process minimap2 {
     	tuple val(name), file("${name}.masked.fasta"), env(MASKREGIONS), emit: fasta
         tuple val(name), file("${name}.masked.sorted.bam"), emit: bam
   	script:
+    if (params.all) {
+    """
+    minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
+    samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam
+
+    # consensus
+    samtools consensus -aa -@ ${task.cpus} -f fasta -X r10.4_sup ${name}.minimap.sorted.bam -o ${name}.masked.fasta
+    rm ${name}.minimap.sorted.bam ${name}.sam
+
+    # get Masked Bases
+    MASKREGIONS=\$(grep -v ">" ${name}.masked.fasta | grep -o "N" | wc -l)
+
+    # rebam to masked file for visuals
+    minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax map-ont ${name}.masked.fasta ${reads}
+    samtools view -bS ${name}.masked.sam | samtools sort - -@ ${task.cpus} -o ${name}.masked.sorted.bam
+
+    rm ${name}.masked.sam
+    """
+    }
+    else {
     """
     minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
     samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam
@@ -24,6 +44,7 @@ process minimap2 {
 
     rm ${name}.masked.sam
     """
+    }
     stub:
     """
     touch ${name}_masked.fasta
@@ -40,6 +61,34 @@ process minimap2_degen {
     	tuple val(name), path("${name}.masked.fasta"), path("${name}_depth_file.txt"), emit: fasta
         tuple val(name), path("${name}.masked.sorted.bam"), emit: bam
   	script:
+    if (params.all) {
+    """
+    minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
+    samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam
+
+    # consensus
+    samtools consensus -aa -@ ${task.cpus} \
+                        --ambig \
+                        -f fasta  \
+                        -X r10.4_sup \
+                        ${name}.minimap.sorted.bam \
+                        -o ${name}.masked.fasta
+
+
+    # reduce disk footprint                    
+    rm ${name}.minimap.sorted.bam ${name}.sam
+
+    # rebam to masked file for visuals
+    minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax map-ont ${name}.masked.fasta ${reads}
+    samtools view -bS ${name}.masked.sam | samtools sort - -@ ${task.cpus} -o ${name}.masked.sorted.bam
+
+    # get depth per position
+    samtools depth -a ${name}.masked.sorted.bam > ${name}_depth_file.txt
+
+    # reduce disk footprint                    
+    rm ${name}.masked.sam
+    """
+    } else {
     """
     minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
     samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam
@@ -65,8 +114,8 @@ process minimap2_degen {
 
     # reduce disk footprint                    
     rm ${name}.masked.sam
-
     """
+    }
     stub:
     """
     touch ${name}_masked.fasta ${name}.masked.sorted.bam
