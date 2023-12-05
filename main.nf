@@ -55,6 +55,7 @@ include { identify_logo_wf } from './workflows/identify_logo.nf'
 
 workflow {
     defaultMSG()
+    if (params.keep_coordinates) {keepMSG()}
    
         identify_logo_wf(mask_regions_degen_wf(nano_input_ch, fasta_input_ch)) 
              
@@ -88,18 +89,20 @@ def helpMSG() {
       This NOT: ${c_yellow}clean${c_reset}.Sample1.clean.fasta ${c_yellow}Sample1${c_reset}.fastq.gz
 
     ${c_yellow}Workflow settings${c_reset}  
-     ${c_blue}--frequency ${c_reset}    Turns on frequency calculation of bases (default: off)
+     ${c_blue}--frequency ${c_reset}    Turns on frequency calculation of bases (default: $params.frequency)
      ${c_blue}--depth X ${c_reset}      Masks regions with a sequencing depth below X with N's [default: $params.depth]
      ${c_blue}--motif X ${c_reset}      Upstream and Downstream length of sequence Motif [default: $params.motif]
 
     ${c_yellow}Options  (optional)${c_reset}
-     --all           Output absolutely all positions, including references with no data aligned against them [default: $params.all]
-     --cores         Amount of cores for a process (local use) [default: $params.cores]
-     --max_cores     Max amount of cores for poreCov to use (local use) [default: $params.max_cores]
-     --memory        Available memory [default: $params.memory]
-     --output        Name of the result folder [default: $params.output]
-     --workdir       Defines the path to the temporary files [default: $params.workdir]
-     --cachedir      Defines the path where singularity images are cached [default: $params.cachedir]
+     --keep_coordinates     Output all reference positions, including low coverage regions.
+                            Ignore insertions in the consensus and mask deletions with "*".
+                            This will add '-aa --show-ins no --show-del no' to samtools consensus [default: $params.keep_coordinates]
+     --cores                Amount of cores for a process (local use) [default: $params.cores]
+     --max_cores            Max amount of cores for poreCov to use (local use) [default: $params.max_cores]
+     --memory               Available memory [default: $params.memory]
+     --output               Name of the result folder [default: $params.output]
+     --workdir              Defines the path to the temporary files [default: $params.workdir]
+     --cachedir             Defines the path where singularity images are cached [default: $params.cachedir]
 
     ${c_yellow}Execution/Engine profiles (choose executer and engine${c_reset}
     MPOA supports profiles to run via different ${c_green}Executers${c_reset} and ${c_blue}Engines${c_reset} 
@@ -137,6 +140,7 @@ def defaultMSG() {
     Starting time:          $nextflow.timestamp
 
     Frequency calculation:
+        --keep_coordinates  $params.keep_coordinates
         --frequency         $params.frequency
 
 
@@ -149,3 +153,27 @@ def defaultMSG() {
     """.stripIndent()
 }
 
+def keepMSG() {
+    c_green = "\033[0;32m";
+    c_reset = "\033[0m";
+    c_yellow = "\033[0;33m";
+    c_blue = "\033[0;34m";
+    c_dim = "\033[2m";
+    log.info """
+    \u001B[36mKeep coordinates option is activated!\033[0m
+    \u001B[1;30m______________________________________\033[0m
+    ATTENTION: The --keep_coordinates parameter will activate '-aa --show-ins no --show-del no' in the samtools consensus command. 
+
+    ${c_yellow}This will cause all reference positions to appear in the consensus regardless of their sequence coverage. 
+
+    Insertions will not be reported in the consensus to keep the original coordinates.
+
+    Deletions will be not deleted in the consensus but masked by "*". 
+
+    When you are using this parameter, you can keep the coordinates of your input reference FASTA intact.
+    This is helpful if you are searching problematic sites with respect to your input unmasked reference sequence. 
+
+    But be aware that you might not be able to directly use the output masked FASTA in downstream applications. 
+    \u001B[1;30m______________________________________\033[0m
+    """.stripIndent()
+}

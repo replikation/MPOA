@@ -7,13 +7,13 @@ process minimap2 {
     	tuple val(name), file("${name}.masked.fasta"), env(MASKREGIONS), emit: fasta
         tuple val(name), file("${name}.masked.sorted.bam"), emit: bam
   	script:
-    if (params.all) {
+    if (params.keep_coordinates) {
     """
     minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
     samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam
 
     # consensus
-    samtools consensus -aa -@ ${task.cpus} -f fasta -X r10.4_sup ${name}.minimap.sorted.bam -o ${name}.masked.fasta
+    samtools consensus -aa --show-ins no --show-del no -@ ${task.cpus} -f fasta -X r10.4_sup ${name}.minimap.sorted.bam -o ${name}.masked.fasta
     rm ${name}.minimap.sorted.bam ${name}.sam
 
     # get Masked Bases
@@ -61,13 +61,14 @@ process minimap2_degen {
     	tuple val(name), path("${name}.masked.fasta"), path("${name}_depth_file.txt"), emit: fasta
         tuple val(name), path("${name}.masked.sorted.bam"), emit: bam
   	script:
-    if (params.all) {
+    if (params.keep_coordinates) {
     """
     minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
     samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam
 
     # consensus
-    samtools consensus -aa -@ ${task.cpus} \
+    samtools consensus -aa --show-ins no --show-del no \
+                        -@ ${task.cpus} \
                         --ambig \
                         -f fasta  \
                         -X r10.4_sup \
