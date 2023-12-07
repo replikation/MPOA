@@ -23,7 +23,7 @@
 * Figures and overviews are provided to assess weather your samples might be affected by such an issue
 
 <p align="center">
-  <img src="data/figures/MPOA_flowchart.png" width="800" title="Workflow">
+  <img src="data/figures/MPOA_flowchart.png" width="700" title="Workflow">
 </p>
 
 # Quick installation
