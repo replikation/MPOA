@@ -14,7 +14,7 @@
 
 **Citation:**
 >Nanopore sequencing for accurate bacterial outbreak tracing <br>
->Mara Lohde, Gabriel E. Wagner, Johanna Dabernig-Heinz, Adrian Viehweger, Claudia Stein, Sascha D. Braun, Stefan Monecke, Mike Marquet, Ralf Ehricht, Mathias W. Pletz, Christian Brandt <br>
+>Mara Lohde, Gabriel E. Wagner, Johanna Dabernig-Heinz, Adrian Viehweger, Sascha D. Braun, Stefan Monecke,Celia Diezel, Claudia Stein, Mike Marquet, Ralf Ehricht, Mathias W. Pletz, Christian Brandt <br>
 >https://www.biorxiv.org/content/10.1101/2023.09.15.556300v1
 
 ## What is this Repo?
