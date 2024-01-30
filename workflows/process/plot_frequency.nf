@@ -5,7 +5,7 @@ process plot_frequency {
     input:
         path(frequency)
     output:
-        path("chart.svg"), optional: true
+        path("frequency.svg"), optional: true
 
     script:
         """
@@ -15,7 +15,7 @@ process plot_frequency {
 
         stub:
         """
-        touch chart.svg
+        touch frequency.svg
         """
 }
 

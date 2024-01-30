@@ -22,6 +22,6 @@ plot <- ggplot(df1, aes(x=Bases, y=ratio, fill=Bases)) +
 
 
 
-svg("chart.svg", height=5, width=10)  # , height=as.numeric(length(combined))*2
+svg("frequency.svg", height=5, width=10)  # , height=as.numeric(length(combined))*2
 plot
 dev.off()
