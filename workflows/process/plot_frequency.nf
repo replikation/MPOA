@@ -1,7 +1,7 @@
 process plot_frequency {
         label 'ggplot2'
         publishDir "${params.output}", mode: 'copy'
-        errorStrategy 'ignore'
+        //errorStrategy 'ignore'
     input:
         path(frequency)
     output:
@@ -9,7 +9,7 @@ process plot_frequency {
 
     script:
         """
-        cat ${frequency} | grep -v "nan" > input.tsv
+        cat ${frequency} | grep -v "nan" | grep "0." > input.tsv
         violin_chart.R
         """
 

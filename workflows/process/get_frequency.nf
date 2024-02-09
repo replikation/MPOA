@@ -20,51 +20,83 @@ process get_frequency {
 
     # count stuff per degenerate base
     ## Y
-    YT_COUNT=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^tT]//g' | awk '{ print length }')
-    YC_COUNT=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^cC]//g' | awk '{ print length }')    
-    Y_TOTAL=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^cCtT]//g' | awk '{ print length }')
+    YT_COUNT=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^T]//g' | awk '{ print length }')
+    YC_COUNT=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^C]//g' | awk '{ print length }')   
+    Yt_COUNT=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^t]//g' | awk '{ print length }')
+    Yc_COUNT=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^c]//g' | awk '{ print length }')    
 
-    paste -d'\\t' <(echo "\$Y_TOTAL") <(echo "\$YT_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/Y\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$Y_TOTAL") <(echo "\$YC_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/Y\\t/' >> ${name}_Frequency.tsv
+    Y_TOTAL=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^CTct]//g' | awk '{ print length }')
+
+    paste -d'\\t' <(echo "\$Y_TOTAL") <(echo "\$YT_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/Y\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$Y_TOTAL") <(echo "\$YC_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/Y\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$Y_TOTAL") <(echo "\$Yt_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/Y\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$Y_TOTAL") <(echo "\$Yc_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/Y\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
 
     ## R
-    RA_COUNT=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^aA]//g' | awk '{ print length }')
-    RG_COUNT=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^gG]//g' | awk '{ print length }')    
+    RA_COUNT=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^A]//g' | awk '{ print length }')
+    RG_COUNT=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^G]//g' | awk '{ print length }')    
+    Ra_COUNT=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^a]//g' | awk '{ print length }')
+    Rg_COUNT=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^g]//g' | awk '{ print length }')  
+
     R_TOTAL=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^aAgG]//g' | awk '{ print length }')
     
-    paste -d'\\t' <(echo "\$R_TOTAL") <(echo "\$RA_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/R\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$R_TOTAL") <(echo "\$RG_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/R\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$R_TOTAL") <(echo "\$RA_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/R\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$R_TOTAL") <(echo "\$RG_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/R\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$R_TOTAL") <(echo "\$Ra_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/R\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$R_TOTAL") <(echo "\$Rg_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/R\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
 
     ## W
-    WA_COUNT=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^aA]//g' | awk '{ print length }')
-    WT_COUNT=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^tT]//g' | awk '{ print length }')    
+    WA_COUNT=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^A]//g' | awk '{ print length }')
+    WT_COUNT=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^T]//g' | awk '{ print length }')    
+    Wa_COUNT=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^a]//g' | awk '{ print length }')
+    Wt_COUNT=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^t]//g' | awk '{ print length }') 
+
     W_TOTAL=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^aAtT]//g' | awk '{ print length }')
     
-    paste -d'\\t' <(echo "\$W_TOTAL") <(echo "\$WA_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/W\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$W_TOTAL") <(echo "\$WT_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/W\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$W_TOTAL") <(echo "\$WA_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/W\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$W_TOTAL") <(echo "\$WT_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/W\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$W_TOTAL") <(echo "\$Wa_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/W\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$W_TOTAL") <(echo "\$Wt_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/W\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv    
+
 
     ## S
-    SG_COUNT=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^gG]//g' | awk '{ print length }')
-    SC_COUNT=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^cC]//g' | awk '{ print length }')    
+    SG_COUNT=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^G]//g' | awk '{ print length }')
+    SC_COUNT=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^C]//g' | awk '{ print length }')    
+    Sg_COUNT=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^g]//g' | awk '{ print length }')
+    Sc_COUNT=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^c]//g' | awk '{ print length }')  
+
     S_TOTAL=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^cCgG]//g' | awk '{ print length }')
     
-    paste -d'\\t' <(echo "\$S_TOTAL") <(echo "\$SG_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/S\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$S_TOTAL") <(echo "\$SC_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/S\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$S_TOTAL") <(echo "\$SG_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/S\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$S_TOTAL") <(echo "\$SC_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/S\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$S_TOTAL") <(echo "\$Sg_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/S\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$S_TOTAL") <(echo "\$Sc_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/S\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv    
 
     ## M
-    MA_COUNT=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^aA]//g' | awk '{ print length }')
-    MC_COUNT=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^cC]//g' | awk '{ print length }')    
+    MA_COUNT=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^A]//g' | awk '{ print length }')
+    MC_COUNT=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^C]//g' | awk '{ print length }')    
+    Ma_COUNT=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^a]//g' | awk '{ print length }')
+    Mc_COUNT=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^c]//g' | awk '{ print length }')  
+
     M_TOTAL=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^aAcC]//g' | awk '{ print length }')
     
-    paste -d'\\t' <(echo "\$M_TOTAL") <(echo "\$MA_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/M\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$M_TOTAL") <(echo "\$MC_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/M\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$M_TOTAL") <(echo "\$MA_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/M\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$M_TOTAL") <(echo "\$MC_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/M\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$M_TOTAL") <(echo "\$Ma_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/M\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$M_TOTAL") <(echo "\$Mc_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/M\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
 
     ## K
-    KG_COUNT=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^gG]//g' | awk '{ print length }')
-    KT_COUNT=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^tT]//g' | awk '{ print length }')
+    KG_COUNT=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^G]//g' | awk '{ print length }')
+    KT_COUNT=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^T]//g' | awk '{ print length }')
+    Kg_COUNT=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^g]//g' | awk '{ print length }')
+    Kt_COUNT=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^t]//g' | awk '{ print length }')  
+
     K_TOTAL=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^tTgG]//g' | awk '{ print length }')
     
-    paste -d'\\t' <(echo "\$K_TOTAL") <(echo "\$KG_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/K\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$K_TOTAL") <(echo "\$KT_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/K\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$K_TOTAL") <(echo "\$KG_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/K\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$K_TOTAL") <(echo "\$KT_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/K\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$K_TOTAL") <(echo "\$Kg_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/K\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
+    paste -d'\\t' <(echo "\$K_TOTAL") <(echo "\$Kt_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/K\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv    
     """
 }
+
