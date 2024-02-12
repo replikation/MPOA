@@ -104,7 +104,7 @@ def helpMSG() {
      --workdir              Defines the path to the temporary files [default: $params.workdir]
      --cachedir             Defines the path where singularity images are cached [default: $params.cachedir]
 
-    ${c_yellow}Execution/Engine profiles (choose executer and engine${c_reset}
+    ${c_yellow}Execution/Engine profiles (choose executer and engine${c_reset})
     MPOA supports profiles to run via different ${c_green}Executers${c_reset} and ${c_blue}Engines${c_reset} 
     examples:
      -profile ${c_green}local${c_reset},${c_blue}docker${c_reset}
@@ -168,12 +168,12 @@ def keepMSG() {
 
     Insertions will not be reported in the consensus to keep the original coordinates.
 
-    Deletions will be not deleted in the consensus but masked by "*". 
+    Deletions will not be deleted in the consensus but masked by "*". 
 
-    When you are using this parameter, you can keep the coordinates of your input reference FASTA intact.
+    When using this parameter, you can keep the coordinates of your input reference FASTA intact.
     This is helpful if you are searching problematic sites with respect to your input unmasked reference sequence. 
 
-    But be aware that you might not be able to directly use the output masked FASTA in downstream applications. 
+    But be aware that you might not directly use the output masked FASTA in downstream applications. 
     \u001B[1;30m______________________________________\033[0m
     """.stripIndent()
 }
