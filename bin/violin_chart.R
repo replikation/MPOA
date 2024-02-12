@@ -18,12 +18,12 @@ plot <- ggplot(df1, aes(x=orientation, y=ratio)) +
   geom_point( aes(x=orientation, y=ratio, colour=Bases), shape = 16,size=2, position = position_jitterdodge(jitter.width = 0.8, jitter.height = 0, dodge.width = 0), alpha=0.2, show.legend = TRUE) +
   scale_color_manual(values = c("#24305E", "#00CCCC", "#f43c3c", "#FBAC23")) +   # alternative #5C5C5C
   facet_grid(cols = vars(deg), scales = "free", space = "free") +
-  ylab(  c("Base fractions for each ambiguous position")  ) +
+  ylab(  c("git@github.com:replikation/MPOA.git")  ) +
   xlab(  c("Strand orientation of each base - determined by aligning each read to their reference")  ) +
   theme_classic() +
   theme(legend.position="bottom", plot.subtitle = element_text(hjust = 0.5))  +
   labs(subtitle = "Observed types of all read ambiguities - labeled by their respective IUPAC code") +
-  guides(colour = guide_legend(override.aes = list(size=10, alpha=0.5)))
+  guides(colour = guide_legend(override.aes = list(size=5, alpha=0.5)))
   #ggtitle(title = "asdasd ", subtitle = "Observed types of ambiguity")
 
 
