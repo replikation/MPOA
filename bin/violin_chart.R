@@ -18,7 +18,7 @@ plot <- ggplot(df1, aes(x=orientation, y=ratio)) +
   geom_point( aes(x=orientation, y=ratio, colour=Bases), shape = 16,size=2, position = position_jitterdodge(jitter.width = 0.8, jitter.height = 0, dodge.width = 0), alpha=0.2, show.legend = TRUE) +
   scale_color_manual(values = c("#24305E", "#00CCCC", "#f43c3c", "#FBAC23")) +   # alternative #5C5C5C
   facet_grid(cols = vars(deg), scales = "free", space = "free") +
-  ylab(  c("git@github.com:replikation/MPOA.git")  ) +
+  ylab(  c("Base fractions of both strands for each ambiguous position")  ) +
   xlab(  c("Strand orientation of each base - determined by aligning each read to their reference")  ) +
   theme_classic() +
   theme(legend.position="bottom", plot.subtitle = element_text(hjust = 0.5))  +
