@@ -7,7 +7,7 @@ process minimap2 {
     	tuple val(name), path("${name}.masked.fasta"), path("${name}_depth_file.txt"), emit: fasta
         tuple val(name), path("${name}.masked.sorted.bam"), emit: bam
   	script:
-    def args = params.keep_coordinates ? '' : '-aa --show-ins no --show-del no'
+    def args = params.keep_coordinates ? '-aa --show-ins no --show-del no' : ''
     """
     minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
     samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam

@@ -7,7 +7,7 @@ process bwa {
     	tuple val(name), path("${name}.masked.fasta"), path("${name}_depth_file.txt"), emit: fasta
         tuple val(name), path("${name}.masked.sorted.bam"), emit: bam
   	script:
-    def args = params.keep_coordinates ? '' : '-aa --show-ins no --show-del no'
+    def args = params.keep_coordinates ? '-aa --show-ins no --show-del no' : ''
     """
     bwa index ${fasta}
     bwa mem -t ${task.cpus} -x pacbio ${fasta} ${reads} > ${name}.sam
