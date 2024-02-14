@@ -1,5 +1,5 @@
-process minimap2 {
-        label 'minimap2'
+process bwa {
+        label 'bwa'
         publishDir "${params.output}/${name}/", mode: 'copy'
     input:
         tuple val(name), path(fasta), path(reads)
@@ -9,7 +9,8 @@ process minimap2 {
   	script:
     def args = params.keep_coordinates ? '' : '-aa --show-ins no --show-del no'
     """
-    minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
+    bwa index ${fasta}
+    bwa mem -t ${task.cpus} -x pacbio ${fasta} ${reads} > ${name}.sam
     samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam
 
     # consensus
@@ -26,7 +27,8 @@ process minimap2 {
     rm ${name}.minimap.sorted.bam ${name}.sam
 
     # rebam to masked file for visuals
-    minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax map-ont ${name}.masked.fasta ${reads}
+    bwa index ${name}.masked.fasta
+    bwa mem -t ${task.cpus} -x pacbio ${name}.masked.fasta ${reads} > ${name}.masked.sam
     samtools view -bS ${name}.masked.sam | samtools sort - -@ ${task.cpus} -o ${name}.masked.sorted.bam
 
     # get depth per position
@@ -53,8 +55,8 @@ process minimap2 {
 }
 
 /*
-process minimap2 {
-        label 'minimap2'
+process bwa {
+        label 'bwa'
         publishDir "${params.output}/${name}/", mode: 'copy'
     input:
         tuple val(name), path(fasta), path(reads)
@@ -64,7 +66,8 @@ process minimap2 {
   	script:
     if (params.keep_coordinates) {
     """
-    minimap2 -t ${task.cpus} -o ${name}.sam -ax map-ont ${fasta} ${reads}
+    bwa index ${fasta}
+    bwa mem -t ${task.cpus} -x pacbio ${fasta} ${reads} > ${name}.sam
     samtools view -bS ${name}.sam | samtools sort - -@ ${task.cpus} -o ${name}.minimap.sorted.bam
 
     # consensus
@@ -94,7 +97,8 @@ process minimap2 {
     MASKREGIONS=\$(grep -v ">" ${name}.masked.fasta | grep -o "N" | wc -l)
 
     # rebam to masked file for visuals
-    minimap2 -t ${task.cpus} -o ${name}.masked.sam -ax map-ont ${name}.masked.fasta ${reads}
+    bwa index ${name}.masked.fasta
+    bwa mem -t ${task.cpus} -x pacbio ${name}.masked.fasta ${reads} > ${name}.masked.sam
     samtools view -bS ${name}.masked.sam | samtools sort - -@ ${task.cpus} -o ${name}.masked.sorted.bam
 
     rm ${name}.masked.sam

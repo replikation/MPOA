@@ -46,7 +46,7 @@ nextflow.enable.dsl=2
 * WORKFLOWS
 **************************/
 
-include { mask_regions_wf; mask_regions_degen_wf } from './workflows/mask_regions.nf' 
+include { mask_regions_wf } from './workflows/mask_regions.nf' 
 include { identify_logo_wf } from './workflows/identify_logo.nf'
 
 /************************** 
@@ -57,7 +57,7 @@ workflow {
     defaultMSG()
     if (params.keep_coordinates) {keepMSG()}
    
-        identify_logo_wf(mask_regions_degen_wf(nano_input_ch, fasta_input_ch)) 
+        identify_logo_wf(mask_regions_wf(nano_input_ch, fasta_input_ch)) 
              
 }
 
@@ -92,6 +92,7 @@ def helpMSG() {
      ${c_blue}--frequency ${c_reset}    Turns on frequency calculation of bases (default: $params.frequency)
      ${c_blue}--depth X ${c_reset}      Masks regions with a sequencing depth below X with N's [default: $params.depth]
      ${c_blue}--motif X ${c_reset}      Upstream and Downstream length of sequence Motif [default: $params.motif]
+     ${c_blue}--mapper  ${c_reset}      Read mapper to use: minimap2, bwa [default: $params.mapper]
 
     ${c_yellow}Options  (optional)${c_reset}
      --keep_coordinates     Output all reference positions, including low coverage regions.
@@ -142,6 +143,7 @@ def defaultMSG() {
     Frequency calculation:
         --keep_coordinates  $params.keep_coordinates
         --frequency         $params.frequency
+        --mapper            $params.mapper
 
 
         --workdir           $params.workdir
