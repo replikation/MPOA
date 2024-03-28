@@ -1,5 +1,5 @@
 process get_frequency {
-        label 'samtools'
+        label 'frequency'
         publishDir "${params.output}/${name}/pileup/", mode: 'copy'
     input:
         tuple val(name), path(fasta), path(positions), path(bam) 
