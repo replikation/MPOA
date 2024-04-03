@@ -89,12 +89,12 @@ def helpMSG() {
       This NOT: ${c_yellow}clean${c_reset}.Sample1.clean.fasta ${c_yellow}Sample1${c_reset}.fastq.gz
 
     ${c_yellow}Workflow settings${c_reset}  
-     ${c_blue}--frequency ${c_reset}    Turns on frequency calculation of bases (default: $params.frequency)
+     ${c_blue}--frequency ${c_reset}    Turns on frequency calculation of bases [default: $params.frequency]
      ${c_blue}--depth X ${c_reset}      Masks regions with a sequencing depth below X with N's [default: $params.depth]
      ${c_blue}--motif X ${c_reset}      Upstream and Downstream length of sequence Motif [default: $params.motif]
      ${c_blue}--mapper  ${c_reset}      Read mapper to use: minimap2, bwa [default: $params.mapper]
 
-    ${c_yellow}Options  (optional)${c_reset}
+    ${c_yellow}Options (optional)${c_reset}
      --keep_coordinates     Output all reference positions, including low coverage regions.
                             Ignore insertions in the consensus and mask deletions with "*".
                             This will add '-aa --show-ins no --show-del no' to samtools consensus [default: $params.keep_coordinates]
@@ -105,9 +105,9 @@ def helpMSG() {
      --workdir              Defines the path to the temporary files [default: $params.workdir]
      --cachedir             Defines the path where singularity images are cached [default: $params.cachedir]
 
-    ${c_yellow}Execution/Engine profiles (choose executer and engine${c_reset})
+    ${c_yellow}Execution/Engine profiles (choose executer and engine)${c_reset}
     MPOA supports profiles to run via different ${c_green}Executers${c_reset} and ${c_blue}Engines${c_reset} 
-    examples:
+    Examples:
      -profile ${c_green}local${c_reset},${c_blue}docker${c_reset}
      -profile ${c_green}slurm${c_reset},${c_blue}singularity${c_reset}
 
@@ -118,8 +118,8 @@ def helpMSG() {
        docker
        singularity
 
-       Note: The singularity profile automatically passes the following environment variables to the container. 
-       to ensure execution on HPCs: HTTPS_PROXY, HTTP_PROXY, http_proxy, https_proxy, FTP_PROXY, ftp_proxy
+    Note: The singularity profile automatically passes the following environment variables to the container. 
+    to ensure execution on HPCs: HTTPS_PROXY, HTTP_PROXY, http_proxy, https_proxy, FTP_PROXY, ftp_proxy
     """.stripIndent()
 }
 
