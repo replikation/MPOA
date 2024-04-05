@@ -26,6 +26,9 @@
   <img src="data/figures/MPOA_flowchart.png" width="700" title="Workflow">
 </p>
 
+## Documentation 
+https://maralohde.github.io/MPOA-documentation/
+
 # Quick installation
 ## 1.1 Nextflow (the workflow manager)
 * MPOA needs [Nextflow](https://www.nextflow.io/index.html) and java run time (default-jre)
