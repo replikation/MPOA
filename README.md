@@ -13,7 +13,7 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/gcloudChris.svg?style=social)](https://twitter.com/gcloudChris) 
 
 **Citation:**
->**Nanopore sequencing for accurate bacterial outbreak tracing** <br>
+>**Accurate bacterial outbreak tracing with Oxford Nanopore sequencing and reduction of methylation-induced errors** <br>
 >Mara Lohde, Gabriel E. Wagner, Johanna Dabernig-Heinz, Adrian Viehweger, Sascha D. Braun, Stefan Monecke,Celia Diezel, Claudia Stein, Mike Marquet, Ralf Ehricht, Mathias W. Pletz, Christian Brandt <br>
 >[https://www.biorxiv.org/content/10.1101/2023.09.15.556300v2](https://www.biorxiv.org/content/10.1101/2023.09.15.556300v3)
 
