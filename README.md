@@ -20,7 +20,7 @@
 ## What is this Repo?
 * A quick workflow to mask fasta files for outbreak analysis
 * It mitigates false base calls from e.g., modified bases by masking all such positions that are "uncertain"
-* Figures and overviews are provided to assess weather your samples might be affected by such an issue
+* Figures and overviews are provided to assess whether your samples might be affected by such an issue
 
 <p align="center">
   <img src="data/figures/MPOA_flowchart.png" width="700" title="Workflow">
