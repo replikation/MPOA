@@ -4,10 +4,10 @@ process plasflow {
     input:
         tuple val(name), path(fasta), val(allmasked) 
     output:
-        tuple val(name), path("${name}.masked_chromosomes.fasta"), emit: chromosomes  optional true
-        tuple val(name), path("${name}.masked_plasmids_plasmids.fasta"), emit: plasmids  optional true
-        tuple val(name), path("${name}.masked_unclassified_unclassified.fasta"), emit: unclassified  optional true
-        tuple val(name), val(allmasked), env(MASKREGIONS), emit: report
+        tuple val(name), path("${name}.masked_chromosomes.fasta"), emit: chromosomes, optional: true
+        tuple val(name), path("${name}.masked_plasmids_plasmids.fasta"), emit: plasmids, optional: true
+        tuple val(name), path("${name}.masked_unclassified_unclassified.fasta"), emit: unclassified, optional: true
+        tuple val(name), val(allmasked), env("MASKREGIONS"), emit: report
     script:
         """
         PlasFlow.py --input ${fasta} --output ${name}.masked --threshold 0.7
@@ -30,11 +30,11 @@ process plasflow_degen {
     input:
         tuple val(name), path(fasta)
     output:
-        tuple val(name), path("${name}.masked_chromosomes.fasta"), emit: chromosomes  optional true
-        tuple val(name), path("${name}.masked_plasmids.fasta"), emit: plasmids  optional true
-        tuple val(name), path("${name}.masked_unclassified.fasta"), emit: unclassified  optional true
-        tuple val(name), env(BASE_N), env(BASE_W), env(BASE_S), env(BASE_M), env(BASE_K), env(BASE_R), 
-                         env(BASE_Y), env(BASE_B), env(BASE_D), env(BASE_H), env(BASE_V), emit: report
+        tuple val(name), path("${name}.masked_chromosomes.fasta"), emit: chromosomes, optional: true
+        tuple val(name), path("${name}.masked_plasmids.fasta"), emit: plasmids, optional: true
+        tuple val(name), path("${name}.masked_unclassified.fasta"), emit: unclassified, optional: true
+        tuple val(name), env("BASE_N"), env("BASE_W"), env("BASE_S"), env("BASE_M"), env("BASE_K"), env("BASE_R"), 
+                         env("BASE_Y"), env("BASE_B"), env("BASE_D"), env("BASE_H"), env("BASE_V"), emit: report
     script:
         """
         PlasFlow.py --input ${fasta} --output ${name}.masked --threshold 0.7

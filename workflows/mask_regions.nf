@@ -42,8 +42,8 @@ workflow mask_regions_wf {
                     }
 
     emit: 
-        plasflow_degen.out.chromosomes
-        mapperbam
+        chromosome_degen = plasflow_degen.out.chromosomes
+        bam = mapperbam
 }
 
 /*
