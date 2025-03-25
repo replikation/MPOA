@@ -4,7 +4,7 @@ process bowtie2 {
     input:
         tuple val(name), path(fasta), path(reads)
   	output:
-    	tuple val(name), file("${name}.masked.fasta"), env(MASKREGIONS), emit: fasta
+    	tuple val(name), file("${name}.masked.fasta"), env("MASKREGIONS"), emit: fasta
         tuple val(name), file("${name}.masked.sorted.bam"), emit: bam
   	script:
     if (params.keep_coordinates) {

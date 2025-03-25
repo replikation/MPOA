@@ -5,8 +5,8 @@ process bedtools {
         tuple val(name), path(fasta), path(depths)
   	output:
     	tuple val(name), file("${name}.masked.dm.fasta"), emit: fasta
-        tuple val(name), env(BASE_N), env(BASE_W), env(BASE_S), env(BASE_M), env(BASE_K), env(BASE_R), 
-                         env(BASE_Y), env(BASE_B), env(BASE_D), env(BASE_H), env(BASE_V), emit: report
+        tuple val(name), env("BASE_N"), env("BASE_W"), env("BASE_S"), env("BASE_M"), env("BASE_K"), env("BASE_R"), 
+                         env("BASE_Y"), env("BASE_B"), env("BASE_D"), env("BASE_H"), env("BASE_V"), emit: report
   	script:
     """
     # remove lines by depth below params and create bed file

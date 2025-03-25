@@ -1,19 +1,24 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
-
 /*
 * Nextflow -- mask regions for outbreak analysis
 * Author: christian.jena@gmail.com
 */
 
-
 /************************** 
-* Help messages & user inputs & checks
+* WORKFLOWS
+**************************/
+
+include { mask_regions_wf } from './workflows/mask_regions.nf' 
+include { identify_logo_wf } from './workflows/identify_logo.nf'
+
+workflow {
+/************************** 
+* Help messages & checks
 **************************/
 // help message
     if (params.help) { exit 0, helpMSG() }
-
 
 // error codes
     if (params.profile) {
@@ -26,53 +31,49 @@ nextflow.enable.dsl=2
     if ( !params.fastq &&  !params.fasta ) {
         exit 1, "input missing, use [--fasta] and [--fastq]"}
 
- 
+    workflow.onError = {
+        println workflow.errorReport
+    }
+
+    // DEFAULT MESSAGE
+    defaultMSG()
+
+ /************************** 
+* INPUTs
+**************************/
+
 // nanopore reads
     if (params.fastq) { nano_input_ch = Channel
             .fromPath( params.fastq, checkIfExists: true)
             .map { file -> tuple(file.simpleName, file) }
             }
 
+// nanopore assembly
     if (params.fasta) { fasta_input_ch = Channel
             .fromPath( params.fasta, checkIfExists: true)
             .map { file -> tuple(file.simpleName, file) }
             }
 
-
-
-
-
 /************************** 
-* WORKFLOWS
+* WORKFLOW LOGIC
 **************************/
 
-include { mask_regions_wf } from './workflows/mask_regions.nf' 
-include { identify_logo_wf } from './workflows/identify_logo.nf'
-
-/************************** 
-* MAIN WORKFLOW 
-**************************/
-
-workflow {
-    defaultMSG()
     if (params.keep_coordinates) {keepMSG()}
-   
-        identify_logo_wf(mask_regions_wf(nano_input_ch, fasta_input_ch)) 
-             
+        mask_regions_wf(nano_input_ch, fasta_input_ch)
+        identify_logo_wf(mask_regions_wf.out.chromosome_degen, mask_regions_wf.out.bam) 
+
 }
 
-
-
 /*************  
-* LOG INFO DEFINITIONS
+* LOG INFO DEFINITIONS & HELP
 *************/
 
 def helpMSG() {
-    c_green = "\033[0;32m";
-    c_reset = "\033[0m";
-    c_yellow = "\033[0;33m";
-    c_blue = "\033[0;34m";
-    c_dim = "\033[2m";
+    def c_green = "\033[0;32m";
+    def c_reset = "\033[0m";
+    def c_yellow = "\033[0;33m";
+    def c_blue = "\033[0;34m";
+    def c_dim = "\033[2m";
     log.info """
     ____________________________________________________________________________________________
     
@@ -124,11 +125,11 @@ def helpMSG() {
 }
 
 def defaultMSG() {
-    c_green = "\033[0;32m";
-    c_reset = "\033[0m";
-    c_yellow = "\033[0;33m";
-    c_blue = "\033[0;34m";
-    c_dim = "\033[2m";
+    def c_green = "\033[0;32m";
+    def c_reset = "\033[0m";
+    def c_yellow = "\033[0;33m";
+    def c_blue = "\033[0;34m";
+    def c_dim = "\033[2m";
     log.info """
     MPOA
     \u001B[1;30m______________________________________\033[0m
@@ -156,11 +157,11 @@ def defaultMSG() {
 }
 
 def keepMSG() {
-    c_green = "\033[0;32m";
-    c_reset = "\033[0m";
-    c_yellow = "\033[0;33m";
-    c_blue = "\033[0;34m";
-    c_dim = "\033[2m";
+    def c_green = "\033[0;32m";
+    def c_reset = "\033[0m";
+    def c_yellow = "\033[0;33m";
+    def c_blue = "\033[0;34m";
+    def c_dim = "\033[2m";
     log.info """
     \u001B[36mKeep coordinates option is activated!\033[0m
     \u001B[1;30m______________________________________\033[0m
