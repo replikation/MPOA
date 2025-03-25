@@ -59,10 +59,11 @@ workflow {
 **************************/
 
     if (params.keep_coordinates) {keepMSG()}
-   
-        identify_logo_wf(mask_regions_wf(nano_input_ch, fasta_input_ch)) 
-             
+        mask_regions_wf(nano_input_ch, fasta_input_ch)
+        identify_logo_wf(mask_regions_wf.out.chromosome_degen, mask_regions_wf.out.bam) 
+
 }
+
 /*************  
 * LOG INFO DEFINITIONS & HELP
 *************/
