@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="data/logo/MPOA-logo.png" width="800" title="Workflow">
+  <img src="data/logo/MPOA-logo.png" width="600" title="Workflow">
 </p>
 
 **MPOA | Workflow to mask pathogens for outbreak analysis**   
