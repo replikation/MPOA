@@ -37,7 +37,7 @@ process minimap2 {
     """
     stub:
     """
-    touch ${name}_masked.fasta ${name}.masked.sorted.bam
+    touch ${name}.masked.fasta ${name}_depth_file.txt ${name}.masked.sorted.bam ${name}.masked.dm.fasta
     BASE_N=5
     BASE_W=7
     BASE_S=1

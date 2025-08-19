@@ -23,6 +23,15 @@ process extract_sequence {
 
         done
         """
+        stub:
+        """
+        touch ${name}_W.regions.fasta ${name}_S.regions.fasta ${name}_M.regions.fasta ${name}_K.regions.fasta ${name}_R.regions.fasta ${name}_Y.regions.fasta ${name}_B.regions.fasta ${name}_D.regions.fasta ${name}_H.regions.fasta ${name}_V.regions.fasta ${name}_H.regions.fasta
+        touch ${name}_masked.fasta ${name}_depth_file.txt ${name}.masked.sorted.bam ${name}.masked.dm.fasta
+        BASE_N=5
+        BASE_W=7
+        BASE_S=1
+        BASE_M=3
+        BASE_K=0
+        BASE_R=0
+        """
 }
-
-

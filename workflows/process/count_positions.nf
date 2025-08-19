@@ -15,5 +15,9 @@ process count_positions {
                 fi
         done
         """
+    stub:
+        """
+        touch *_positions.txt
+        """
 }
 

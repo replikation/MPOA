@@ -118,5 +118,9 @@ process get_frequency {
     unset KG_COUNT KT_COUNT Kg_COUNT Kt_COUNT K_TOTAL k_TOTAL
 
     """
+    stub:
+    """
+    touch ${name}_Frequency.tsv ${name}_pileup.tsv
+    """ 
 }
 
