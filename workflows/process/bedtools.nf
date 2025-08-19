@@ -30,7 +30,7 @@ process bedtools {
     """
     stub:
     """
-    touch ${name}_masked.fasta ${name}.masked.sorted.bam
+    touch ${name}_masked.fasta ${name}.masked.sorted.bam ${name}.masked.dm.fasta
     BASE_N=5
     BASE_W=7
     BASE_S=1
