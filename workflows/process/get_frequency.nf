@@ -226,5 +226,9 @@ process get_frequency {
             if (total_k_lower > 0) print "reverse\\tK\\tT\\t" count_Kt_lower / total_k_lower >> "${name}_Frequency.tsv";
         }' "${name}_pileup.tsv"
     """
+    stub:
+    """
+    touch ${name}_Frequency.tsv ${name}_pileup.tsv
+    """ 
 }
 
