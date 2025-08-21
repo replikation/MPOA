@@ -1,5 +1,5 @@
 process get_frequency {
-        errorStrategy 'ignore'
+        // errorStrategy is set in the nodes.config file
         label 'frequency'
         publishDir "${params.output}/${name}/pileup/", mode: 'copy'
     input:
@@ -8,115 +8,223 @@ process get_frequency {
   	output:
     	tuple val(name), file("${name}_Frequency.tsv"), path("${name}_pileup.tsv")
   	script:
+    if (task.exitStatus == 137) 
+
     """
     # ACTIVATE HISTORY
         set -euxo pipefail
 
     # remove headers and create one correct bed position file for samtools (name \t position)
-    tail -q -n+2 ${positions}  | awk -v OFS='\\t' '{print \$1,\$5}' > clean.bed
+    tail -q -n+2 ${positions} | awk -v OFS='\\t' '{print \$1,\$5}' > clean.bed
 
     # pileup for all positions
     samtools index ${bam}
-    samtools mpileup ${bam} -f ${fasta} --positions clean.bed --output ${name}_pileup.tsv
+    samtools mpileup ${bam} --max-depth 200 --no-BAQ -f ${fasta} --positions clean.bed --output ${name}_pileup.tsv
+
 
     # count stuff per degenerate base
-    ## Y
-    YT_COUNT=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^T]//g' | awk '{ print length }')
-    YC_COUNT=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^C]//g' | awk '{ print length }')   
-    Yt_COUNT=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^t]//g' | awk '{ print length }')
-    Yc_COUNT=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^c]//g' | awk '{ print length }')    
+        awk -F'\\t' '{
+            # Process Y
+            if (\$3 == "Y") {
+                total_Y_upper += gsub(/[CT]/, "&", \$5);
+                count_YT_upper += gsub(/T/, "&", \$5);
+                count_YC_upper += gsub(/C/, "&", \$5);
+                total_y_lower += gsub(/[ct]/, "&", \$5);
+                count_Yt_lower += gsub(/t/, "&", \$5);
+                count_Yc_lower += gsub(/c/, "&", \$5);
+            }
+            # Process R
+            if (\$3 == "R") {
+                total_R_upper += gsub(/[AG]/, "&", \$5);
+                count_RA_upper += gsub(/A/, "&", \$5);
+                count_RG_upper += gsub(/G/, "&", \$5);
+                total_r_lower += gsub(/[ag]/, "&", \$5);
+                count_Ra_lower += gsub(/a/, "&", \$5);
+                count_Rg_lower += gsub(/g/, "&", \$5);
+            }
+            # Process W
+            if (\$3 == "W") {
+                total_W_upper += gsub(/[AT]/, "&", \$5);
+                count_WA_upper += gsub(/A/, "&", \$5);
+                count_WT_upper += gsub(/T/, "&", \$5);
+                total_w_lower += gsub(/[at]/, "&", \$5);
+                count_Wa_lower += gsub(/a/, "&", \$5);
+                count_Wt_lower += gsub(/t/, "&", \$5);
+            }
+            # Process S
+            if (\$3 == "S") {
+                total_S_upper += gsub(/[GC]/, "&", \$5);
+                count_SG_upper += gsub(/G/, "&", \$5);
+                count_SC_upper += gsub(/C/, "&", \$5);
+                total_s_lower += gsub(/[gc]/, "&", \$5);
+                count_Sg_lower += gsub(/g/, "&", \$5);
+                count_Sc_lower += gsub(/c/, "&", \$5);
+            }
+            # Process M
+            if (\$3 == "M") {
+                total_M_upper += gsub(/[AC]/, "&", \$5);
+                count_MA_upper += gsub(/A/, "&", \$5);
+                count_MC_upper += gsub(/C/, "&", \$5);
+                total_m_lower += gsub(/[ac]/, "&", \$5);
+                count_Ma_lower += gsub(/a/, "&", \$5);
+                count_Mc_lower += gsub(/c/, "&", \$5);
+            }
+            # Process K
+            if (\$3 == "K") {
+                total_K_upper += gsub(/[TG]/, "&", \$5);
+                count_KT_upper += gsub(/T/, "&", \$5);
+                count_KG_upper += gsub(/G/, "&", \$5);
+                total_k_lower += gsub(/[tg]/, "&", \$5);
+                count_Kt_lower += gsub(/t/, "&", \$5);
+                count_Kg_lower += gsub(/g/, "&", \$5);
+            }
+        }
+        END {
+            # Print results for Y
+            if (total_Y_upper > 0) print "forward\\tY\\tT\\t" count_YT_upper / total_Y_upper >> "${name}_Frequency.tsv";
+            if (total_Y_upper > 0) print "forward\\tY\\tC\\t" count_YC_upper / total_Y_upper >> "${name}_Frequency.tsv";
+            if (total_y_lower > 0) print "reverse\\tY\\tT\\t" count_Yt_lower / total_y_lower >> "${name}_Frequency.tsv";
+            if (total_y_lower > 0) print "reverse\\tY\\tC\\t" count_Yc_lower / total_y_lower >> "${name}_Frequency.tsv";
 
-    Y_TOTAL=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^CT]//g' | awk '{ print length }')
-    y_TOTAL=\$(awk -F'\\t' '{if(\$3=="Y")print \$5}' ${name}_pileup.tsv | sed 's/[^ct]//g' | awk '{ print length }')    
+            # Print results for R
+            if (total_R_upper > 0) print "forward\\tR\\tA\\t" count_RA_upper / total_R_upper >> "${name}_Frequency.tsv";
+            if (total_R_upper > 0) print "forward\\tR\\tG\\t" count_RG_upper / total_R_upper >> "${name}_Frequency.tsv";
+            if (total_r_lower > 0) print "reverse\\tR\\tA\\t" count_Ra_lower / total_r_lower >> "${name}_Frequency.tsv";
+            if (total_r_lower > 0) print "reverse\\tR\\tG\\t" count_Rg_lower / total_r_lower >> "${name}_Frequency.tsv";
 
-    paste -d'\\t' <(echo "\$Y_TOTAL") <(echo "\$YT_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/Y\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$Y_TOTAL") <(echo "\$YC_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/Y\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$y_TOTAL") <(echo "\$Yt_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/Y\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$y_TOTAL") <(echo "\$Yc_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/Y\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
+            # Print results for W
+            if (total_W_upper > 0) print "forward\\tW\\tA\\t" count_WA_upper / total_W_upper >> "${name}_Frequency.tsv";
+            if (total_W_upper > 0) print "forward\\tW\\tT\\t" count_WT_upper / total_W_upper >> "${name}_Frequency.tsv";
+            if (total_w_lower > 0) print "reverse\\tW\\tA\\t" count_Wa_lower / total_w_lower >> "${name}_Frequency.tsv";
+            if (total_w_lower > 0) print "reverse\\tW\\tT\\t" count_Wt_lower / total_w_lower >> "${name}_Frequency.tsv";
 
-    # unsetting, might need to do this earlier in batches depending on the RAM
-    unset YT_COUNT YC_COUNT Yt_COUNT Yc_COUNT Y_TOTAL y_TOTAL
+            # Print results for S
+            if (total_S_upper > 0) print "forward\\tS\\tG\\t" count_SG_upper / total_S_upper >> "${name}_Frequency.tsv";
+            if (total_S_upper > 0) print "forward\\tS\\tC\\t" count_SC_upper / total_S_upper >> "${name}_Frequency.tsv";
+            if (total_s_lower > 0) print "reverse\\tS\\tG\\t" count_Sg_lower / total_s_lower >> "${name}_Frequency.tsv";
+            if (total_s_lower > 0) print "reverse\\tS\\tC\\t" count_Sc_lower / total_s_lower >> "${name}_Frequency.tsv";
 
-    ## R
-    RA_COUNT=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^A]//g' | awk '{ print length }')
-    RG_COUNT=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^G]//g' | awk '{ print length }')    
-    Ra_COUNT=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^a]//g' | awk '{ print length }')
-    Rg_COUNT=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^g]//g' | awk '{ print length }')  
+            # Print results for M
+            if (total_M_upper > 0) print "forward\\tM\\tA\\t" count_MA_upper / total_M_upper >> "${name}_Frequency.tsv";
+            if (total_M_upper > 0) print "forward\\tM\\tC\\t" count_MC_upper / total_M_upper >> "${name}_Frequency.tsv";
+            if (total_m_lower > 0) print "reverse\\tM\\tA\\t" count_Ma_lower / total_m_lower >> "${name}_Frequency.tsv";
+            if (total_m_lower > 0) print "reverse\\tM\\tC\\t" count_Mc_lower / total_m_lower >> "${name}_Frequency.tsv";
 
-    R_TOTAL=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^AG]//g' | awk '{ print length }')
-    r_TOTAL=\$(awk -F'\\t' '{if(\$3=="R")print \$5}' ${name}_pileup.tsv | sed 's/[^ag]//g' | awk '{ print length }')    
-    
-    paste -d'\\t' <(echo "\$R_TOTAL") <(echo "\$RA_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/R\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$R_TOTAL") <(echo "\$RG_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/R\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$r_TOTAL") <(echo "\$Ra_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/R\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$r_TOTAL") <(echo "\$Rg_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/R\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
+            # Print results for K
+            if (total_K_upper > 0) print "forward\\tK\\tG\\t" count_KG_upper / total_K_upper >> "${name}_Frequency.tsv";
+            if (total_K_upper > 0) print "forward\\tK\\tT\\t" count_KT_upper / total_K_upper >> "${name}_Frequency.tsv";
+            if (total_k_lower > 0) print "reverse\\tK\\tG\\t" count_Kg_lower / total_k_lower >> "${name}_Frequency.tsv";
+            if (total_k_lower > 0) print "reverse\\tK\\tT\\t" count_Kt_lower / total_k_lower >> "${name}_Frequency.tsv";
+        }' "${name}_pileup.tsv"
 
-    unset RA_COUNT RG_COUNT Ra_COUNT Rg_COUNT R_TOTAL r_TOTAL
+    """
+    else
+    """
+        # ACTIVATE HISTORY
+        set -euxo pipefail
 
-    ## W
-    WA_COUNT=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^A]//g' | awk '{ print length }')
-    WT_COUNT=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^T]//g' | awk '{ print length }')    
-    Wa_COUNT=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^a]//g' | awk '{ print length }')
-    Wt_COUNT=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^t]//g' | awk '{ print length }') 
+    # remove headers and create one correct bed position file for samtools (name \t position)
+    tail -q -n+2 ${positions} | awk -v OFS='\\t' '{print \$1,\$5}' > clean.bed
 
-    W_TOTAL=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^AT]//g' | awk '{ print length }')
-    w_TOTAL=\$(awk -F'\\t' '{if(\$3=="W")print \$5}' ${name}_pileup.tsv | sed 's/[^at]//g' | awk '{ print length }')
-    
-    paste -d'\\t' <(echo "\$W_TOTAL") <(echo "\$WA_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/W\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$W_TOTAL") <(echo "\$WT_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/W\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$w_TOTAL") <(echo "\$Wa_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/W\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$w_TOTAL") <(echo "\$Wt_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/W\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv    
+    # pileup for all positions
+    samtools index ${bam}
+    samtools mpileup ${bam} --max-depth 200 -f ${fasta} --positions clean.bed --output ${name}_pileup.tsv
 
-    unset WA_COUNT WT_COUNT Wa_COUNT Wt_COUNT W_TOTAL w_TOTAL
 
-    ## S
-    SG_COUNT=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^G]//g' | awk '{ print length }')
-    SC_COUNT=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^C]//g' | awk '{ print length }')    
-    Sg_COUNT=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^g]//g' | awk '{ print length }')
-    Sc_COUNT=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^c]//g' | awk '{ print length }')  
+    # count stuff per degenerate base
+        awk -F'\\t' '{
+            # Process Y
+            if (\$3 == "Y") {
+                total_Y_upper += gsub(/[CT]/, "&", \$5);
+                count_YT_upper += gsub(/T/, "&", \$5);
+                count_YC_upper += gsub(/C/, "&", \$5);
+                total_y_lower += gsub(/[ct]/, "&", \$5);
+                count_Yt_lower += gsub(/t/, "&", \$5);
+                count_Yc_lower += gsub(/c/, "&", \$5);
+            }
+            # Process R
+            if (\$3 == "R") {
+                total_R_upper += gsub(/[AG]/, "&", \$5);
+                count_RA_upper += gsub(/A/, "&", \$5);
+                count_RG_upper += gsub(/G/, "&", \$5);
+                total_r_lower += gsub(/[ag]/, "&", \$5);
+                count_Ra_lower += gsub(/a/, "&", \$5);
+                count_Rg_lower += gsub(/g/, "&", \$5);
+            }
+            # Process W
+            if (\$3 == "W") {
+                total_W_upper += gsub(/[AT]/, "&", \$5);
+                count_WA_upper += gsub(/A/, "&", \$5);
+                count_WT_upper += gsub(/T/, "&", \$5);
+                total_w_lower += gsub(/[at]/, "&", \$5);
+                count_Wa_lower += gsub(/a/, "&", \$5);
+                count_Wt_lower += gsub(/t/, "&", \$5);
+            }
+            # Process S
+            if (\$3 == "S") {
+                total_S_upper += gsub(/[GC]/, "&", \$5);
+                count_SG_upper += gsub(/G/, "&", \$5);
+                count_SC_upper += gsub(/C/, "&", \$5);
+                total_s_lower += gsub(/[gc]/, "&", \$5);
+                count_Sg_lower += gsub(/g/, "&", \$5);
+                count_Sc_lower += gsub(/c/, "&", \$5);
+            }
+            # Process M
+            if (\$3 == "M") {
+                total_M_upper += gsub(/[AC]/, "&", \$5);
+                count_MA_upper += gsub(/A/, "&", \$5);
+                count_MC_upper += gsub(/C/, "&", \$5);
+                total_m_lower += gsub(/[ac]/, "&", \$5);
+                count_Ma_lower += gsub(/a/, "&", \$5);
+                count_Mc_lower += gsub(/c/, "&", \$5);
+            }
+            # Process K
+            if (\$3 == "K") {
+                total_K_upper += gsub(/[TG]/, "&", \$5);
+                count_KT_upper += gsub(/T/, "&", \$5);
+                count_KG_upper += gsub(/G/, "&", \$5);
+                total_k_lower += gsub(/[tg]/, "&", \$5);
+                count_Kt_lower += gsub(/t/, "&", \$5);
+                count_Kg_lower += gsub(/g/, "&", \$5);
+            }
+        }
+        END {
+            # Print results for Y
+            if (total_Y_upper > 0) print "forward\\tY\\tT\\t" count_YT_upper / total_Y_upper >> "${name}_Frequency.tsv";
+            if (total_Y_upper > 0) print "forward\\tY\\tC\\t" count_YC_upper / total_Y_upper >> "${name}_Frequency.tsv";
+            if (total_y_lower > 0) print "reverse\\tY\\tT\\t" count_Yt_lower / total_y_lower >> "${name}_Frequency.tsv";
+            if (total_y_lower > 0) print "reverse\\tY\\tC\\t" count_Yc_lower / total_y_lower >> "${name}_Frequency.tsv";
 
-    S_TOTAL=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^CG]//g' | awk '{ print length }')
-    s_TOTAL=\$(awk -F'\\t' '{if(\$3=="S")print \$5}' ${name}_pileup.tsv | sed 's/[^cg]//g' | awk '{ print length }')    
-    
-    paste -d'\\t' <(echo "\$S_TOTAL") <(echo "\$SG_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/S\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$S_TOTAL") <(echo "\$SC_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/S\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$s_TOTAL") <(echo "\$Sg_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/S\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$s_TOTAL") <(echo "\$Sc_COUNT") | awk -v OFS='\\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/S\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv    
+            # Print results for R
+            if (total_R_upper > 0) print "forward\\tR\\tA\\t" count_RA_upper / total_R_upper >> "${name}_Frequency.tsv";
+            if (total_R_upper > 0) print "forward\\tR\\tG\\t" count_RG_upper / total_R_upper >> "${name}_Frequency.tsv";
+            if (total_r_lower > 0) print "reverse\\tR\\tA\\t" count_Ra_lower / total_r_lower >> "${name}_Frequency.tsv";
+            if (total_r_lower > 0) print "reverse\\tR\\tG\\t" count_Rg_lower / total_r_lower >> "${name}_Frequency.tsv";
 
-    unset SG_COUNT SC_COUNT Sg_COUNT Sc_COUNT S_TOTAL s_TOTAL
+            # Print results for W
+            if (total_W_upper > 0) print "forward\\tW\\tA\\t" count_WA_upper / total_W_upper >> "${name}_Frequency.tsv";
+            if (total_W_upper > 0) print "forward\\tW\\tT\\t" count_WT_upper / total_W_upper >> "${name}_Frequency.tsv";
+            if (total_w_lower > 0) print "reverse\\tW\\tA\\t" count_Wa_lower / total_w_lower >> "${name}_Frequency.tsv";
+            if (total_w_lower > 0) print "reverse\\tW\\tT\\t" count_Wt_lower / total_w_lower >> "${name}_Frequency.tsv";
 
-    ## M
-    MA_COUNT=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^A]//g' | awk '{ print length }')
-    MC_COUNT=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^C]//g' | awk '{ print length }')    
-    Ma_COUNT=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^a]//g' | awk '{ print length }')
-    Mc_COUNT=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^c]//g' | awk '{ print length }')  
+            # Print results for S
+            if (total_S_upper > 0) print "forward\\tS\\tG\\t" count_SG_upper / total_S_upper >> "${name}_Frequency.tsv";
+            if (total_S_upper > 0) print "forward\\tS\\tC\\t" count_SC_upper / total_S_upper >> "${name}_Frequency.tsv";
+            if (total_s_lower > 0) print "reverse\\tS\\tG\\t" count_Sg_lower / total_s_lower >> "${name}_Frequency.tsv";
+            if (total_s_lower > 0) print "reverse\\tS\\tC\\t" count_Sc_lower / total_s_lower >> "${name}_Frequency.tsv";
 
-    M_TOTAL=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^AC]//g' | awk '{ print length }')
-    m_TOTAL=\$(awk -F'\\t' '{if(\$3=="M")print \$5}' ${name}_pileup.tsv | sed 's/[^ac]//g' | awk '{ print length }')    
-    
-    paste -d'\\t' <(echo "\$M_TOTAL") <(echo "\$MA_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/M\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$M_TOTAL") <(echo "\$MC_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/M\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$m_TOTAL") <(echo "\$Ma_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/A\\t/' | sed 's/^/M\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$m_TOTAL") <(echo "\$Mc_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/C\\t/' | sed 's/^/M\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
+            # Print results for M
+            if (total_M_upper > 0) print "forward\\tM\\tA\\t" count_MA_upper / total_M_upper >> "${name}_Frequency.tsv";
+            if (total_M_upper > 0) print "forward\\tM\\tC\\t" count_MC_upper / total_M_upper >> "${name}_Frequency.tsv";
+            if (total_m_lower > 0) print "reverse\\tM\\tA\\t" count_Ma_lower / total_m_lower >> "${name}_Frequency.tsv";
+            if (total_m_lower > 0) print "reverse\\tM\\tC\\t" count_Mc_lower / total_m_lower >> "${name}_Frequency.tsv";
 
-    unset MA_COUNT MC_COUNT Ma_COUNT Mc_COUNT M_TOTAL m_TOTAL
-
-    ## K
-    KG_COUNT=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^G]//g' | awk '{ print length }')
-    KT_COUNT=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^T]//g' | awk '{ print length }')
-    Kg_COUNT=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^g]//g' | awk '{ print length }')
-    Kt_COUNT=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^t]//g' | awk '{ print length }')  
-
-    K_TOTAL=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^TG]//g' | awk '{ print length }')
-    k_TOTAL=\$(awk -F'\\t' '{if(\$3=="K")print \$5}' ${name}_pileup.tsv | sed 's/[^tg]//g' | awk '{ print length }')    
-    
-    paste -d'\\t' <(echo "\$K_TOTAL") <(echo "\$KG_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/K\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$K_TOTAL") <(echo "\$KT_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/K\\t/' | sed 's/^/forward\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$k_TOTAL") <(echo "\$Kg_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/G\\t/' | sed 's/^/K\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv
-    paste -d'\\t' <(echo "\$k_TOTAL") <(echo "\$Kt_COUNT") | awk -v OFS='\t' '{print \$2 / \$1}'| sed 's/^/T\\t/' | sed 's/^/K\\t/' | sed 's/^/reverse\\t/' >> ${name}_Frequency.tsv    
-
-    unset KG_COUNT KT_COUNT Kg_COUNT Kt_COUNT K_TOTAL k_TOTAL
-
+            # Print results for K
+            if (total_K_upper > 0) print "forward\\tK\\tG\\t" count_KG_upper / total_K_upper >> "${name}_Frequency.tsv";
+            if (total_K_upper > 0) print "forward\\tK\\tT\\t" count_KT_upper / total_K_upper >> "${name}_Frequency.tsv";
+            if (total_k_lower > 0) print "reverse\\tK\\tG\\t" count_Kg_lower / total_k_lower >> "${name}_Frequency.tsv";
+            if (total_k_lower > 0) print "reverse\\tK\\tT\\t" count_Kt_lower / total_k_lower >> "${name}_Frequency.tsv";
+        }' "${name}_pileup.tsv"
     """
 }
 

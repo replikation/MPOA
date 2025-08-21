@@ -73,7 +73,6 @@ def helpMSG() {
     def c_reset = "\033[0m";
     def c_yellow = "\033[0;33m";
     def c_blue = "\033[0;34m";
-    def c_dim = "\033[2m";
     log.info """
     ____________________________________________________________________________________________
     
@@ -125,11 +124,6 @@ def helpMSG() {
 }
 
 def defaultMSG() {
-    def c_green = "\033[0;32m";
-    def c_reset = "\033[0m";
-    def c_yellow = "\033[0;33m";
-    def c_blue = "\033[0;34m";
-    def c_dim = "\033[2m";
     log.info """
     MPOA
     \u001B[1;30m______________________________________\033[0m
@@ -157,11 +151,7 @@ def defaultMSG() {
 }
 
 def keepMSG() {
-    def c_green = "\033[0;32m";
-    def c_reset = "\033[0m";
     def c_yellow = "\033[0;33m";
-    def c_blue = "\033[0;34m";
-    def c_dim = "\033[2m";
     log.info """
     \u001B[36mKeep coordinates option is activated!\033[0m
     \u001B[1;30m______________________________________\033[0m
