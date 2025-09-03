@@ -2,11 +2,11 @@ process get_fasta {
   	label 'python3'
 	output:
 
-	tuple val("test.fasta")
+	tuple val("test"), path("test.fasta")
 
 	script:
 	"""
-	wget --no-check-certificate -q  -O - "https://osf.io/download/p4ny7/" > test.fasta
+	wget --no-check-certificate -q  -O - "https://osf.io/download/cv543/" > test.fasta
 	"""
     stub:
     """
@@ -17,10 +17,10 @@ process get_fasta {
 process get_fastq{
   	label 'python3'
 	output:
-	tuple val("test.fastq.gz")
+	tuple val("test"), path("test.fastq.gz")
 	script:
 	"""
-	wget --no-check-certificate -q  -O - "https://osf.io/download/x9m3k/" > test.fastq.gz
+	wget --no-check-certificate -q  -O - "https://osf.io/download/68b828e61daee02e98bf5c1b/" > test.fastq.gz
 	"""
     stub:
     """

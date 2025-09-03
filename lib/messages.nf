@@ -14,6 +14,9 @@ def helpMSG() {
     ${c_yellow}Usage example:${c_reset}
     nextflow run replikation/MPOA --fastq '*.fastq' --fasta '*.fasta' -profile local,docker
 
+    ${c_yellow}Test run:${c_reset}
+    nextflow run replikation/MPOA -profile test,docker
+
     ${c_yellow}Inputs (Mandatory):
      ${c_green}--fastq ${c_reset}        e.g.: 'sample1.fastq' or '*.fastq' or '*/*.fastq'
      ${c_green}--fasta ${c_reset}        e.g.: 'sample1.fasta' or '*.fasta' 
@@ -44,10 +47,12 @@ def helpMSG() {
      -profile ${c_green}local${c_reset},${c_blue}docker${c_reset}
      -profile ${c_green}slurm${c_reset},${c_blue}singularity${c_reset}
 
-      ${c_green}Executer${c_reset} (choose one):
-       local
-       slurm
-      ${c_blue}Engines${c_reset} (choose one):
+    ${c_green}Executer${c_reset} (choose one):
+        local
+        slurm
+    ${c_green}Test data${c_reset} (choose one + Engine):
+        test_fasta       runs workflow with testprofile
+    ${c_blue}Engines${c_reset} (choose one):
        docker
        singularity
 
