@@ -10,12 +10,13 @@ workflow mask_regions_wf {
         fastq
         fasta
     main: 
-
+    
     // join channels
     combined_ch = fasta.join(fastq, by:0)
 
     // check if everything is alright
     no_match = combined_ch.ifEmpty{ log.info "\033[0;33mCould not match any reads to genomes, please read the help via --help\033[0m" }
+
 
     if (params.mapper == 'minimap2')        { minimap2(combined_ch)   ; mapperout = minimap2.out.fasta  ; mapperbam = minimap2.out.bam}
     else if (params.mapper == 'bwa')        { bwa(combined_ch)        ; mapperout = bwa.out.fasta       ; mapperbam = bwa.out.bam }   

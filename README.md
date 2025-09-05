@@ -14,7 +14,7 @@
 **Citation:**
 >**Accurate bacterial outbreak tracing with Oxford Nanopore sequencing and reduction of methylation-induced errors** <br>
 >Mara Lohde, Gabriel E. Wagner, Johanna Dabernig-Heinz, Adrian Viehweger, Sascha D. Braun, Stefan Monecke,Celia Diezel, Claudia Stein, Mike Marquet, Ralf Ehricht, Mathias W. Pletz, Christian Brandt <br>
->[https://www.biorxiv.org/content/10.1101/2023.09.15.556300v2](https://www.biorxiv.org/content/10.1101/2023.09.15.556300v3)
+>[https://pubmed.ncbi.nlm.nih.gov/39443152/](https://pubmed.ncbi.nlm.nih.gov/39443152/)
 
 ## What is this Repo?
 * A quick workflow to mask fasta files for outbreak analysis
