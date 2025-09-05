@@ -15,7 +15,7 @@ include { identify_logo_wf      } from './workflows/identify_logo.nf'
 
 /* Custom functions and Messages */
 include { exit_with_error       } from './lib/functions.nf'
-//include { checkForWhitespace    } from './lib/functions.nf'
+include { checkForWhitespace    } from './lib/functions.nf'
 include { helpMSG               } from './lib/messages.nf'
 include { defaultMSG            } from './lib/messages.nf'
 include { keepMSG               } from './lib/messages.nf'
@@ -48,14 +48,14 @@ workflow {
         Channel.fromPath(params.fastq, checkIfExists: true)
             .map { it -> tuple(it.simpleName, it) } :
         Channel.empty()
-        //checkForWhitespace('--fastq', params.fastq)
+        checkForWhitespace('--fastq', params.fastq)
 
 // nanopore assembly (fasta)
     fasta_input_ch = params.fasta ?  
         Channel.fromPath(params.fasta, checkIfExists: true)
             .map { it -> tuple(it.simpleName, it) } :
         Channel.empty()
-        //checkForWhitespace('--fasta', params.fasta)
+        checkForWhitespace('--fasta', params.fasta)
 
 /************************** 
 * WORKFLOW LOGIC

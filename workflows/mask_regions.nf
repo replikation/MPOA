@@ -10,9 +10,7 @@ workflow mask_regions_wf {
         fastq
         fasta
     main: 
-
-    fasta
-    fastq
+    
     // join channels
     combined_ch = fasta.join(fastq, by:0)
 
