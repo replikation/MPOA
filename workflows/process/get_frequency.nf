@@ -1,7 +1,7 @@
 process get_frequency {
         // errorStrategy is set in the nodes.config file
         label 'frequency'
-        publishDir "${params.output}/${name}/pileup/", mode: 'copy'
+
     input:
         tuple val(name), path(fasta), path(positions), path(bam) 
 

@@ -1,6 +1,6 @@
 process plasflow {
         label 'plasflow'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+
     input:
         tuple val(name), path(fasta), val(allmasked) 
     output:
@@ -26,7 +26,7 @@ process plasflow {
 
 process plasflow_degen {
         label 'plasflow'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+
     input:
         tuple val(name), path(fasta)
     output:

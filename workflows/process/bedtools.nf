@@ -1,6 +1,6 @@
 process bedtools {
         label 'bedtools'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+
     input:
         tuple val(name), path(fasta), path(depths)
   	output:

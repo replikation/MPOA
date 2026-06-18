@@ -51,7 +51,7 @@ def helpMSG() {
         local
         slurm
     ${c_green}Test data${c_reset} (choose one + Engine):
-        test_fasta       runs workflow with testprofile
+        test       runs workflow with testprofile
     ${c_blue}Engines${c_reset} (choose one):
        docker
        singularity

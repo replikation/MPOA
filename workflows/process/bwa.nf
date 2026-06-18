@@ -1,6 +1,6 @@
 process bwa {
         label 'bwa'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+
     input:
         tuple val(name), path(fasta), path(reads)
   	output:
@@ -57,7 +57,7 @@ process bwa {
 /*
 process bwa {
         label 'bwa'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+
     input:
         tuple val(name), path(fasta), path(reads)
   	output:

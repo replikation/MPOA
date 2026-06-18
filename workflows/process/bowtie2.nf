@@ -1,6 +1,6 @@
 process bowtie2 {
         label 'bowtie2'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+
     input:
         tuple val(name), path(fasta), path(reads)
   	output:
@@ -54,7 +54,7 @@ process bowtie2 {
 
 process bowtie2_degen {
         label 'bowtie2'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+
     input:
         tuple val(name), path(fasta), path(reads)
   	output:

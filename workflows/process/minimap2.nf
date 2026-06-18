@@ -1,6 +1,6 @@
 process minimap2 {
         label 'minimap2'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+
     input:
         tuple val(name), path(fasta), path(reads)
   	output:
@@ -55,7 +55,7 @@ process minimap2 {
 /*
 process minimap2 {
         label 'minimap2'
-        publishDir "${params.output}/${name}/", mode: 'copy'
+
     input:
         tuple val(name), path(fasta), path(reads)
   	output:
