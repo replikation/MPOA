@@ -93,40 +93,16 @@ workflow {
 * WORKFLOW OUTPUTS
 **************************/
 output {
-    masked_fasta {
-        path { name, _fasta, _depth -> "${name}/" }
-    }
-    masked_bam {
-        path { name, _bam -> "${name}/" }
-    }
-    masked_dm {
-        path { name, _fasta -> "${name}/" }
-    }
-    chromosomes {
-        path { name, _fasta -> "${name}/" }
-    }
-    plasmids {
-        path { name, _fasta -> "${name}/" }
-    }
-    unclassified {
-        path { name, _fasta -> "${name}/" }
-    }
-    masked_summary {
-        path '.'
-    }
-    snp_positions {
-        path { name, _fasta, positions -> positions >> "${name}/SNP_positions/" }
-    }
-    snp_regions {
-        path { name, regions -> regions >> "${name}/SNP_regions/" }
-    }
-    motif_logos {
-        path 'motif_logos'
-    }
-    frequency {
-        path '.'
-    }
-    pileup {
-        path { name, _frequency, _pileup -> "${name}/pileup/" }
-    }
+    masked_fasta {path { item -> "${item[0]}/" }}
+    masked_bam {path { item -> "${item[0]}/" }}
+    masked_dm {path { item -> "${item[0]}/" }}
+    chromosomes {path { item -> "${item[0]}/" }}
+    plasmids {path { item-> "${item[0]}/" }}
+    unclassified {path { item -> "${item[0]}/" }}
+    masked_summary {path '.'}
+    snp_positions {path { item -> "${item[0]}/SNP_positions/" }}
+    snp_regions {path { item -> "${item[0]}/SNP_regions/" }}
+    motif_logos {path 'motif_logos'}
+    frequency {path '.'}
+    pileup {path { item -> "${item[0]}/pileup/" }}
 }
