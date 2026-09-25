@@ -21,6 +21,7 @@ include { defaultMSG            } from './lib/messages.nf'
 include { keepMSG               } from './lib/messages.nf'
 
 workflow {
+    main:
 /**************************
 * Help messages & checks
 **************************/
@@ -70,6 +71,62 @@ workflow {
         fasta_ch = fasta_input_ch.mix(fasta_test_ch)
 
     if (params.keep_coordinates) {keepMSG()}
-        mask_regions_wf(fastq_ch, fasta_ch)
-        identify_logo_wf(mask_regions_wf.out.chromosome_degen, mask_regions_wf.out.bam)
+        mask_out = mask_regions_wf(fastq_ch, fasta_ch)
+        logo_out = identify_logo_wf(mask_out.chromosome_degen, mask_out.bam)
+
+    publish:
+        masked_fasta = mask_out.mapper_fasta
+        masked_bam = mask_out.bam
+        masked_dm = mask_out.masked_dm
+        chromosomes = mask_out.chromosome_degen
+        plasmids = mask_out.plasmids
+        unclassified = mask_out.unclassified
+        masked_summary = mask_out.summary
+        snp_positions = logo_out.positions.filter { _name, _fasta, positions -> positions }
+        snp_regions = logo_out.regions.filter { _name, regions -> regions }
+        motif_logos = logo_out.logos
+        frequency = logo_out.frequency
+        pileup = logo_out.pileup
+}
+
+/************************** 
+* WORKFLOW OUTPUTS
+**************************/
+output {
+    masked_fasta {
+        path { name, _fasta, _depth -> "${name}/" }
+    }
+    masked_bam {
+        path { name, _bam -> "${name}/" }
+    }
+    masked_dm {
+        path { name, _fasta -> "${name}/" }
+    }
+    chromosomes {
+        path { name, _fasta -> "${name}/" }
+    }
+    plasmids {
+        path { name, _fasta -> "${name}/" }
+    }
+    unclassified {
+        path { name, _fasta -> "${name}/" }
+    }
+    masked_summary {
+        path '.'
+    }
+    snp_positions {
+        path { name, _fasta, positions -> positions >> "${name}/SNP_positions/" }
+    }
+    snp_regions {
+        path { name, regions -> regions >> "${name}/SNP_regions/" }
+    }
+    motif_logos {
+        path 'motif_logos'
+    }
+    frequency {
+        path '.'
+    }
+    pileup {
+        path { name, _frequency, _pileup -> "${name}/pileup/" }
+    }
 }

@@ -33,8 +33,7 @@ workflow mask_regions_wf {
 
 
     report_write_ch = bedtools.out.report.join(plasflow_degen.out.report)
-        .collectFile(seed: 'name,type,N(ATCG),W(AT),S(CG),M(AC),K(TG),R(AG),Y(TC),B(TCG),D(ATG),H(ATC),V(ACG)\n', 
-                    storeDir: params.output + "/") {
+        .collectFile(seed: 'name,type,N(ATCG),W(AT),S(CG),M(AC),K(TG),R(AG),Y(TC),B(TCG),D(ATG),H(ATC),V(ACG)\n') {
                     row -> [ "masked_bases_summary.csv", row[0] + ',' + 'genome' + "," + row[1] + ',' + row[2] + "," + row[3] + ',' + row[4] + ',' +
                     row[5] + ',' + row[6] + ',' + row[7] + ',' + row[8] + ',' + row[9] + ',' + row[10] + ',' + row[11] + ',' + '\n' +
                     row[0] + ',' + 'chromosome' + "," + row[12] + ',' + row[13] + "," + row[14] + ',' + row[15] + ',' +
@@ -44,7 +43,12 @@ workflow mask_regions_wf {
 
     emit: 
         chromosome_degen = plasflow_degen.out.chromosomes
+        plasmids = plasflow_degen.out.plasmids
+        unclassified = plasflow_degen.out.unclassified
+        mapper_fasta = mapperout
         bam = mapperbam
+        masked_dm = bedtools.out.fasta
+        summary = report_write_ch
 }
 
 /*

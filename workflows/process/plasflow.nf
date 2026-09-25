@@ -58,7 +58,7 @@ process plasflow_degen {
         """
         stub:
         """
-        touch  ${name}_chromosomes.fasta ${name}_plasmids.fasta ${name}_unclassified.fasta
+        touch  ${name}.masked_chromosomes.fasta ${name}.masked_plasmids.fasta ${name}.masked_unclassified.fasta
         BASE_N=5
         BASE_W=7
         BASE_S=1

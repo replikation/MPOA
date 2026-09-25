@@ -11,21 +11,32 @@ workflow identify_logo_wf {
     main: 
 
         // get positions
-        extract_sequence(count_positions(fasta))
+        positions_ch = count_positions(fasta)
+
+        // extract regions
+        regions_ch = extract_sequence(positions_ch)
 
         // visualize motifs
-        plot_motifs(extract_sequence.out)
+        logos_ch = plot_motifs(regions_ch)
+
+        frequency_ch = channel.empty()
+        pileup_ch = channel.empty()
 
         // plot frequency per deg. base
         if (params.frequency) {
-            get_frequency(
-                count_positions.out // val path( fastadm and masked), path (positions deg bases)
+            pileup_ch = get_frequency(
+                positions_ch // val path( fastadm and masked), path (positions deg bases)
                 .join(bam)
             )
 
             // collect all frequency results
-            plot_frequency(get_frequency.out.map{it -> it[1]}.collect())
+            frequency_ch = plot_frequency(pileup_ch.map{it -> it[1]}.collect())
         }      
 
-    emit:  extract_sequence.out
+    emit:
+        positions = positions_ch
+        regions = regions_ch
+        logos = logos_ch
+        frequency = frequency_ch
+        pileup = pileup_ch
 }

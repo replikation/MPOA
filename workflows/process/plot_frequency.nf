@@ -1,6 +1,5 @@
 process plot_frequency {
         label 'ggplot2'
-        publishDir "${params.output}", mode: 'copy'
         //errorStrategy 'ignore'
     input:
         path(frequency)
