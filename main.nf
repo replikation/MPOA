@@ -30,8 +30,7 @@ workflow {
     params.help             ? { exit 0, helpMSG() }()       : defaultMSG()
 
 // error codes
-    if (!workflow.profile.contains('test') && ![params.fasta, params.fastq].any{it}) {
-                exit_with_error(6, "Input missing See also --help for more.")}
+    if (!workflow.profile.contains('test') && ![params.fasta, params.fastq]) {exit_with_error(6, "Input missing See also --help for more.")}
     if (params.profile && !params.profile.startsWith('-'))                  {exit_with_error(1, "[--profile] is WRONG use [-profile].")}
     if (!workflow.profile.contains('test') && ![params.fasta,params.fastq]) {exit_with_error(1, "Provide both --fasta and --fastq input files.")}
     if ( workflow.profile == 'standard' )                                   {exit_with_error(1, "NO EXECUTION PROFILE SELECTED, using [-profile local,docker]")}
@@ -46,24 +45,24 @@ workflow {
 
 // nanopore reads (fastq)
     fastq_input_ch = params.fastq ?
-        Channel.fromPath(params.fastq, checkIfExists: true)
+        channel.fromPath(params.fastq, checkIfExists: true)
             .map { it -> tuple(it.simpleName, it) } :
-        Channel.empty()
+        channel.empty()
         checkForWhitespace('--fastq', params.fastq)
 
 // nanopore assembly (fasta)
     fasta_input_ch = params.fasta ?  
-        Channel.fromPath(params.fasta, checkIfExists: true)
+        channel.fromPath(params.fasta, checkIfExists: true)
             .map { it -> tuple(it.simpleName, it) } :
-        Channel.empty()
+        channel.empty()
         checkForWhitespace('--fasta', params.fasta)
 
 /************************** 
 * WORKFLOW LOGIC
 **************************/
     // 0. Test data
-    fasta_test_ch = workflow.profile.contains('test') ? get_fasta() : Channel.empty()
-    fastq_test_ch = workflow.profile.contains('test') ? get_fastq() : Channel.empty()
+    fasta_test_ch = workflow.profile.contains('test') ? get_fasta() : channel.empty()
+    fastq_test_ch = workflow.profile.contains('test') ? get_fastq() : channel.empty()
     
     // 1. Main Workflow
 
