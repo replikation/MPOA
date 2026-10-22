@@ -5,10 +5,10 @@ def exit_with_error(exit_code, log_message) {
 
 def checkForWhitespace(paramName, paramValue) {
     if (!paramValue) {
-        return Channel.empty()
+        return channel.empty()
     }
 
-    return Channel.fromPath(paramValue, glob: true)
+    return channel.fromPath(paramValue, glob: true)
         .map { path ->
             if (path.toString().contains(' ')) {
                 // The 'error' command immediately terminates the pipeline with a message

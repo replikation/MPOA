@@ -18,9 +18,9 @@ workflow mask_regions_wf {
     no_match = combined_ch.ifEmpty{ log.info "\033[0;33mCould not match any reads to genomes, please read the help via --help\033[0m" }
 
 
-    if (params.mapper == 'minimap2')        { minimap2(combined_ch)   ; mapperout = minimap2.out.fasta  ; mapperbam = minimap2.out.bam}
-    else if (params.mapper == 'bwa')        { bwa(combined_ch)        ; mapperout = bwa.out.fasta       ; mapperbam = bwa.out.bam }   
-    else                                    { minimap2(combined_ch)   ; mapperout = minimap2.out.fasta  ; mapperbam = minimap2.out.bam}
+    if (params.mapper == 'minimap2')        { minimap2(no_match)   ; mapperout = minimap2.out.fasta  ; mapperbam = minimap2.out.bam}
+    else if (params.mapper == 'bwa')        { bwa(no_match)        ; mapperout = bwa.out.fasta       ; mapperbam = bwa.out.bam }   
+    else                                    { minimap2(no_match)   ; mapperout = minimap2.out.fasta  ; mapperbam = minimap2.out.bam}
 
 
 
@@ -29,7 +29,7 @@ workflow mask_regions_wf {
 
 
     // report masked status
-    report_ch = plasflow_degen.out.report.view { name, N, W, S, M, K, R, Y, B, D, H, V -> "$name (chromosome): N:$N, W:$W, S:$S, M:$M, K:$K, R:$R, Y:$Y, B:$B, D:$D, H:$H, V:$V" }
+    plasflow_degen.out.report.view { name, N, W, S, M, K, R, Y, B, D, H, V -> "$name (chromosome): N:$N, W:$W, S:$S, M:$M, K:$K, R:$R, Y:$Y, B:$B, D:$D, H:$H, V:$V" }
 
 
     report_write_ch = bedtools.out.report.join(plasflow_degen.out.report)
