@@ -93,16 +93,16 @@ workflow {
 * WORKFLOW OUTPUTS
 **************************/
 output {
-    masked_fasta {path { item -> "${item[0]}/" }}
-    masked_bam {path { item -> "${item[0]}/" }}
-    masked_dm {path { item -> "${item[0]}/" }}
-    chromosomes {path { item -> "${item[0]}/" }}
-    plasmids {path { item-> "${item[0]}/" }}
-    unclassified {path { item -> "${item[0]}/" }}
+    masked_fasta {path { name  -> "${name[0]}/" }}
+    masked_bam {path { name -> "${name[0]}/" }}
+    masked_dm {path { name -> "${name[0]}/" }}
+    chromosomes {path { name -> "${name[0]}/" }}
+    plasmids {path { name-> "${name[0]}/" }}
+    unclassified {path { name -> "${name[0]}/" }}
     masked_summary {path '.'}
-    snp_positions {path { item -> "${item[0]}/SNP_positions/" }}
-    snp_regions {path { item -> "${item[0]}/SNP_regions/" }}
+    snp_positions {path { name -> "${name[0]}/SNP_positions/" }}
+    snp_regions {path { name -> "${name[0]}/SNP_regions/" }}
     motif_logos {path 'motif_logos'}
     frequency {path '.'}
-    pileup {path { item -> "${item[0]}/pileup/" }}
+    pileup {path { name -> "${name[0]}/pileup/" }}
 }
